@@ -1,0 +1,20 @@
+.custom-searchbar .searchbar-input {
+    border: none;
+  }
+
+  .recipe-image {
+
+    
+  object-fit: cover;
+}
+
+
+
+
+@media only screen and (max-width: 298px) {
+  .moon{
+    display: none;
+  }
+}
+ 
+  
