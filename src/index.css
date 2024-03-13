@@ -151,3 +151,15 @@ body.dark {
 
   --ion-card-background: #1e1e1e;
 }
+
+.skeleton-title {
+  width: 80%;
+  height: 20px;
+  margin: 8px auto;
+}
+
+.skeleton-subtitle {
+  width: 60%;
+  height: 16px;
+  margin: 4px auto;
+}
