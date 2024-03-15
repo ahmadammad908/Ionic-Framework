@@ -1,6 +1,6 @@
 import './App.css';
 import '@ionic/react/css/core.css';
-import { IonApp, IonRouterOutlet ,setupIonicReact } from '@ionic/react';
+import { IonApp,  IonRouterOutlet ,setupIonicReact } from '@ionic/react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Import BrowserRouter
 
 import '@ionic/react/css/normalize.css';
@@ -52,7 +52,7 @@ function App() {
           <Routes>
             {/* <Route path="/" element={<Content />} /> */}
             <Route path="/" element={<Content />} />
-            <Route path='/add' element={<Add/>}></Route>
+            <Route path="/add" element={<Add />} />
           </Routes>
         </IonRouterOutlet>
       </Router>
