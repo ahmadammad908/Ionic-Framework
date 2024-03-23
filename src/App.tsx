@@ -2,7 +2,7 @@ import './App.css';
 import '@ionic/react/css/core.css';
 import { IonApp,  IonRouterOutlet ,setupIonicReact } from '@ionic/react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Import BrowserRouter
-
+import Blog from './Blog';
 import '@ionic/react/css/normalize.css';
 import '@ionic/react/css/structure.css';
 import '@ionic/react/css/typography.css';
@@ -53,6 +53,7 @@ function App() {
             {/* <Route path="/" element={<Content />} /> */}
             <Route path="/" element={<Content />} />
             <Route path="/add" element={<Add />} />
+            <Route path='/blog/:id' element={<Blog/>}></Route>
           </Routes>
         </IonRouterOutlet>
       </Router>

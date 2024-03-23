@@ -69,6 +69,7 @@ const Example: React.FunctionComponent = () => {
                 <IonIcon icon={close} />
               </IonButton>
             </IonButtons>
+
           </IonToolbar>
         </IonHeader>
         <IonContent className="ion-padding">
@@ -88,21 +89,31 @@ const Example: React.FunctionComponent = () => {
 
       <IonPage id="main-content">
         <IonHeader class='ion-header'>
+
           <IonToolbar className={themeToggle ? 'dark-header' : ''}>
+
             <IonButtons slot="start">
-              <IonMenuButton />
+              <IonMenuButton  style={{ marginTop:"12px"}}/>
             </IonButtons>
-            <IonTitle style={{textAlign:"start"}}  className="overflow-hidden overflow-ellipsis overflow-x-hidden">Tech Sea</IonTitle>
-            <IonIcon icon={themeToggle ? moon : sunny} style={{ color: themeToggle ? 'orange' : 'orange' ,}} slot='end' className='moon'/>
+
+
+            <IonTitle style={{ textAlign: "start" }} className="overflow-hidden overflow-ellipsis overflow-x-hidden">Tech Sea</IonTitle>
+
+
+            <div  className=' hidden md:block md:flex md:justify-center '>
+              <IonSearchbar style={{  padding: "10px", width: "50%" }} onClick={() => setMyModal({ isOpen: true })} placeholder='Search in Tech Sea'></IonSearchbar>
+            </div>
+
+            <IonIcon icon={themeToggle ? moon : sunny} style={{ color: themeToggle ? 'orange' : 'orange', marginTop:"22px" }} slot='end' className='moon' />
             <IonToggle
               checked={themeToggle}
               onIonChange={toggleDarkMode}
               slot="end"
-              style={{ margin: '10px' }}
+              style={{ margin: '10px', marginTop:"15px"}}
             >
             </IonToggle>
-          
-            <IonButtons slot="end">
+
+            <IonButtons slot="end" className='md:hidden block mt-[14px]'>
               <IonButton onClick={() => setMyModal({ isOpen: true })}>
                 <IonIcon icon={search} />
               </IonButton>
@@ -114,11 +125,11 @@ const Example: React.FunctionComponent = () => {
             <IonToolbar>
               <IonSearchbar
                 showCancelButton="never"
-                placeholder="Search"
-                style={{marginTop:"10px"}}
+                placeholder="Search in Tech Sea" 
+                style={{ marginTop: "10px" }}
               ></IonSearchbar>
               <IonButtons slot="end">
-                <IonButton onClick={() => setMyModal({ isOpen: false })} style={{ color: "#3880FF80",marginTop:"10px" }}>
+                <IonButton onClick={() => setMyModal({ isOpen: false })} style={{ color: "#3880FF80", marginTop: "10px" }}>
                   Cancel
                 </IonButton>
               </IonButtons>
