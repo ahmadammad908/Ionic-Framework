@@ -2,7 +2,7 @@ import './App.css';
 import '@ionic/react/css/core.css';
 import { IonApp,  IonRouterOutlet ,setupIonicReact } from '@ionic/react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Import BrowserRouter
-import Blog from './Blog';
+import Blog from './Components/CourseData';
 import '@ionic/react/css/normalize.css';
 import '@ionic/react/css/structure.css';
 import '@ionic/react/css/typography.css';
@@ -14,10 +14,11 @@ import '@ionic/react/css/text-alignment.css';
 import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
-import Example from './Example';
-import Content from './Content';
-import Add from './Add';
-import { getTheme, isIos, setTheme } from "../src/Utils";
+import Example from './Components/Navbar';
+import Content from './Components/Courses';
+import Add from './Components/AdminPanel';
+// import Home from './Components/Home';
+import { getTheme, isIos, setTheme } from "../src/Utils/Utils";
 // setupIonicReact()
 
 
@@ -50,8 +51,8 @@ function App() {
       <Router>
         <IonRouterOutlet>
           <Routes>
-            {/* <Route path="/" element={<Content />} /> */}
             <Route path="/" element={<Content />} />
+            {/* <Route path="/" element={<Home />} /> */}
             <Route path="/add" element={<Add />} />
             <Route path='/blog/:id' element={<Blog/>}></Route>
           </Routes>

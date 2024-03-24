@@ -14,14 +14,14 @@ import {
   IonButton,
 } from '@ionic/react';
 import { collection, onSnapshot, query, QuerySnapshot } from 'firebase/firestore'; // Updated import
-import { db } from '../src/Server/Firebase';
-import Example from './Example';
+import { db } from '../Server/Firebase';
+import Example from './Navbar';
 import { Link } from 'react-router-dom';
-import Girl from "../src/assets/images/girl.png.png"
-import Category from "../src/assets/images/walt.svg"
-import Samsung from "../src/assets/images/samsung.svg"
-import Cisco from "../src/assets/images/cisco.svg";
-import Ericsson from "../src/assets/images/ericsson.svg";
+import Girl from "../assets/images/girl.png.png"
+import Category from "../assets/images/walt.svg"
+import Samsung from "../assets/images/samsung.svg"
+import Cisco from "../assets/images/cisco.svg";
+import Ericsson from "../assets/images/ericsson.svg";
 
 interface Article {
   id: string;

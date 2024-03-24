@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { IonContent, IonHeader } from '@ionic/react';
 import { Timestamp, collection, addDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { storage, db } from '../src/Server/Firebase';
+import { storage, db } from '../Server/Firebase';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { useNavigate } from 'react-router-dom';
 
 // Assuming Example is a component
-import Example from './Example';
+import Example from './Navbar';
 
 interface FormData {
   title: string;

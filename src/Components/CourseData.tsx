@@ -1,8 +1,8 @@
 import { doc, onSnapshot } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { db } from "./Server/Firebase";
-import Example from "./Example";
+import { db } from "../Server/Firebase";
+import Example from "./Navbar";
 import { IonHeader } from "@ionic/react";
 
 interface Article {
