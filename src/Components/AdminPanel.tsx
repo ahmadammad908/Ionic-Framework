@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IonContent, IonHeader } from '@ionic/react';
+import { IonContent } from '@ionic/react';
 import { Timestamp, collection, addDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage, db } from '../Server/Firebase';
@@ -9,7 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 
 // Assuming Example is a component
-import Navbar from './Navbar';
+// import Navbar from './Navbar';
 
 interface FormData {
   title: string;
@@ -131,9 +131,9 @@ const Add = () => {
   return (
     <>
 
-      <IonHeader>
+      {/* <IonHeader>
         <Navbar />
-      </IonHeader>
+      </IonHeader> */}
       <IonContent>
         <div className="flex flex-col items-center justify-center min-h-screen" style={{ margin: '30px' }}>
           <div className="bg-white shadow-md rounded-md p-8 max-w-sm w-full">

@@ -15,40 +15,21 @@ import {
   IonMenuButton,
   IonList,
   IonItem,
-  IonLabel,
-  IonActionSheet
+  IonActionSheet,
+  IonLabel
 } from '@ionic/react';
 import { search, close } from 'ionicons/icons';
-import { db } from '../Server/Firebase';
-import { collection, onSnapshot, query, QuerySnapshot } from 'firebase/firestore';
 import { moon, sunny } from 'ionicons/icons';
 
-const Navbar: React.FunctionComponent<{ handleCategoryClick: (category: string) => void, handleMobileCategory: (category: string) => void }> = ({ handleCategoryClick, handleMobileCategory }) => {
+interface NavbarProps {
+  handleCategoryClick: (category: string) => void;
+  categories: { id: string; name: string }[];
+}
 
+const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, categories }) => {
   const [myModal, setMyModal] = useState({ isOpen: false });
   const [themeToggle, setThemeToggle] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
   const [isOpens, setIsOpens] = useState(false); // Corrected variable name
-  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const categoryRef = collection(db, 'categories');
-      const q = query(categoryRef);
-
-      const unsubscribe = onSnapshot(q, (snapshot: QuerySnapshot) => {
-        const updatedCategories: { id: string; name: string }[] = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          name: doc.data().name,
-        }));
-        setCategories(updatedCategories);
-      });
-
-      return unsubscribe;
-    };
-
-    fetchCategories();
-  }, []);
 
   const closeMenu = () => {
     const menu = document.querySelector('ion-menu');
@@ -99,10 +80,11 @@ const Navbar: React.FunctionComponent<{ handleCategoryClick: (category: string) 
         </IonHeader>
         <IonContent className="ion-padding">
           <IonList>
-            <IonItem>
-              Home
-            </IonItem>
-
+            {categories && categories.map((category) => (
+              <IonItem key={category.id} onClick={() => handleCategoryClick(category.name)}>
+                <IonLabel>{category.name}</IonLabel>
+              </IonItem>
+            ))}
             <div className='md:hidden block'>
               <IonItem>
                 <IonButton fill="outline">Login</IonButton>
@@ -123,14 +105,13 @@ const Navbar: React.FunctionComponent<{ handleCategoryClick: (category: string) 
             <div className=' md:flex md:justify-center '>
               <div className='flex justify-end'>
                 <IonButton onClick={() => setIsOpens(true)} style={{ fontSize: "14px", marginLeft: "-6px" }} fill='clear' >Categories</IonButton>
-
               </div>
               <IonActionSheet
                 isOpen={isOpens} // Corrected variable name
                 header="Categories"
                 onDidDismiss={() => setIsOpens(false)} // Corrected variable name
                 buttons={[
-                  ...categories.map((category) => ({
+                  ...(categories || []).map((category) => ({
                     text: category.name,
                     handler: () => {
                       console.log('Category clicked:', category.name);
@@ -148,7 +129,6 @@ const Navbar: React.FunctionComponent<{ handleCategoryClick: (category: string) 
 
               <IonSearchbar style={{ padding: "10px", width: "50%" }} onClick={() => setMyModal({ isOpen: true })} placeholder='Search in Tech Sea' className='hidden md:block'></IonSearchbar>
               <div style={{ display: "flex" }}>
-
                 <IonButton fill="outline" className='hidden md:block'>Login</IonButton>
                 <IonButton className='ml-[10px] hidden md:block'>SignUp</IonButton>
               </div>

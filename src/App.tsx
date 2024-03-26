@@ -1,6 +1,6 @@
 import './App.css';
 import '@ionic/react/css/core.css';
-import { IonApp,  IonRouterOutlet ,setupIonicReact } from '@ionic/react';
+import { IonApp,setupIonicReact } from '@ionic/react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Import BrowserRouter
 import Blog from './Components/CourseData';
 import '@ionic/react/css/normalize.css';
@@ -14,12 +14,11 @@ import '@ionic/react/css/text-alignment.css';
 import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
-import Example from './Components/Navbar';
+import Navbar from './Components/Navbar';
 import Content from './Components/Courses';
 import AdminPanel from './Components/AdminPanel';
 // import Home from './Components/Home';
 import { getTheme, isIos, setTheme } from "../src/Utils/Utils";
-// setupIonicReact()
 
 
 const mode = new URLSearchParams(window.location.search).get("mode");
@@ -47,17 +46,16 @@ setTheme(getTheme());
 function App() {
   return (
     <IonApp>
-     <Example/>
+     <Navbar/>
       <Router>
-        <IonRouterOutlet>
+        
           <Routes>
             <Route path="/" element={<Content />} />
-            {/* <Route path="/" element={<Home />} /> */}
             <Route path="/admin" element={<AdminPanel />} />
             <Route path='/blog/:id' element={<Blog/>}></Route>
          
           </Routes>
-        </IonRouterOutlet>
+        
       </Router>
     </IonApp>
   );
