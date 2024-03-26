@@ -16,5 +16,22 @@
     display: none;
   }
 }
+@media only screen and (max-width: 991px) {
+  #title{
+    display: none;
+  }
+}
+@media only screen and (max-width: 757px) {
+  #title{
+    display: block;
+    margin-top: 14px;
+  }
+}
+@media only screen and (max-width: 343px) {
+  #title{
+    display: none;
+    margin-top: 14px;
+  }
+}
  
   

@@ -2,7 +2,7 @@ import { doc, onSnapshot } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "../Server/Firebase";
-import Example from "./Navbar";
+import Navbar from "./Navbar";
 import { IonHeader } from "@ionic/react";
 
 interface Article {
@@ -35,7 +35,7 @@ const Blog: React.FC = () => {
   return (
     <>
       <IonHeader>
-        <Example />
+        <Navbar />
       </IonHeader>
       <h1>Blog</h1>
       {article && (

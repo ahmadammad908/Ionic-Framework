@@ -16,7 +16,7 @@ import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 import Example from './Components/Navbar';
 import Content from './Components/Courses';
-import Add from './Components/AdminPanel';
+import AdminPanel from './Components/AdminPanel';
 // import Home from './Components/Home';
 import { getTheme, isIos, setTheme } from "../src/Utils/Utils";
 // setupIonicReact()
@@ -53,8 +53,9 @@ function App() {
           <Routes>
             <Route path="/" element={<Content />} />
             {/* <Route path="/" element={<Home />} /> */}
-            <Route path="/add" element={<Add />} />
+            <Route path="/admin" element={<AdminPanel />} />
             <Route path='/blog/:id' element={<Blog/>}></Route>
+         
           </Routes>
         </IonRouterOutlet>
       </Router>

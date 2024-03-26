@@ -19,13 +19,36 @@ import {
   IonActionSheet
 } from '@ionic/react';
 import { search, close } from 'ionicons/icons';
+import { db } from '../Server/Firebase';
+import { collection, onSnapshot, query, QuerySnapshot } from 'firebase/firestore';
 import { moon, sunny } from 'ionicons/icons';
 
-const Example: React.FunctionComponent = () => {
+const Navbar: React.FunctionComponent<{ handleCategoryClick: (category: string) => void, handleMobileCategory: (category: string) => void }> = ({ handleCategoryClick, handleMobileCategory }) => {
+
   const [myModal, setMyModal] = useState({ isOpen: false });
   const [themeToggle, setThemeToggle] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isOpens, setIsOpens] = useState(false); // Corrected variable name
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const categoryRef = collection(db, 'categories');
+      const q = query(categoryRef);
+
+      const unsubscribe = onSnapshot(q, (snapshot: QuerySnapshot) => {
+        const updatedCategories: { id: string; name: string }[] = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          name: doc.data().name,
+        }));
+        setCategories(updatedCategories);
+      });
+
+      return unsubscribe;
+    };
+
+    fetchCategories();
+  }, []);
 
   const closeMenu = () => {
     const menu = document.querySelector('ion-menu');
@@ -77,53 +100,15 @@ const Example: React.FunctionComponent = () => {
         <IonContent className="ion-padding">
           <IonList>
             <IonItem>
-              <IonLabel>About Us</IonLabel>
+              Home
             </IonItem>
-            <IonItem>
-              <IonLabel>Contact US</IonLabel>
-            </IonItem>
-            <IonItem>
-              <IonLabel>Blogs</IonLabel>
-            </IonItem>
-            <IonItem className='md:hidden block'>
-              <IonButton onClick={() => setIsOpens(true)} style={{ fontSize: "14px", marginLeft: "-6px" }} fill='clear' >Categories</IonButton>
-              <IonActionSheet
-                isOpen={isOpens} // Corrected variable name
-                header="Categories"
-                buttons={[
-                  {
-                    text: 'Software Engineering',
-                    data: {
-                      action: 'share',
-                    },
-                  },
-                  {
-                    text: 'Artificial Intelligence',
-                  },
-                  {
-                    text: 'Data Science',
-                  },
-                  {
-                    text: 'Design',
-                  },
-                  {
-                    text: 'Marketing',
-                  },
-                  {
-                    text: 'Cancel',
-                    role: 'destructive',
-                  },
-                ]}
-                onDidDismiss={() => setIsOpens(false)} // Corrected variable name
-              ></IonActionSheet>
-            </IonItem>
-           <div className='md:hidden block'>
-           <IonItem>
-            <IonButton fill="outline">Login</IonButton>
-            <IonButton className='ml-[10px]'>SignUp</IonButton>
 
-            </IonItem>
-           </div>
+            <div className='md:hidden block'>
+              <IonItem>
+                <IonButton fill="outline">Login</IonButton>
+                <IonButton className='ml-[10px]'>SignUp</IonButton>
+              </IonItem>
+            </div>
           </IonList>
         </IonContent>
       </IonMenu>
@@ -134,42 +119,38 @@ const Example: React.FunctionComponent = () => {
             <IonButtons slot="start">
               <IonMenuButton style={{ marginTop: "12px" }} />
             </IonButtons>
-            <IonTitle style={{ textAlign: "start", paddingLeft: "50px" }} className="overflow-hidden overflow-ellipsis overflow-x-hidden">Tech Sea</IonTitle>
-            <div className='hidden md:block md:flex md:justify-center'>
-              <IonButton onClick={() => setIsOpen(true)} style={{ fontSize: "14px" }} className='lg:block md:hidden' fill='clear' >Categories</IonButton>
+            <IonTitle style={{ textAlign: "start", paddingLeft: "50px" }} className="overflow-hidden overflow-ellipsis overflow-x-hidden" id='title'>Tech Sea</IonTitle>
+            <div className=' md:flex md:justify-center '>
+              <div className='flex justify-end'>
+                <IonButton onClick={() => setIsOpens(true)} style={{ fontSize: "14px", marginLeft: "-6px" }} fill='clear' >Categories</IonButton>
+
+              </div>
               <IonActionSheet
-                isOpen={isOpen}
+                isOpen={isOpens} // Corrected variable name
                 header="Categories"
+                onDidDismiss={() => setIsOpens(false)} // Corrected variable name
                 buttons={[
-                  {
-                    text: 'Software Engineering',
-                    data: {
-                      action: 'share',
-                    },
-                  },
-                  {
-                    text: 'Artificial Intelligence',
-                  },
-                  {
-                    text: 'Data Science',
-                  },
-                  {
-                    text: 'Design',
-                  },
-                  {
-                    text: 'Marketing',
-                  },
+                  ...categories.map((category) => ({
+                    text: category.name,
+                    handler: () => {
+                      console.log('Category clicked:', category.name);
+                      handleCategoryClick(category.name)
+                      // You can add more functionality here, like filtering articles based on category
+                    }
+                  })),
                   {
                     text: 'Cancel',
-                    role: 'destructive',
-                  },
+                    role: 'destructive' // Changed to 'cancel' for the cancel button
+                  }
                 ]}
-                onDidDismiss={() => setIsOpen(false)}
-              ></IonActionSheet>
-              <IonSearchbar style={{ padding: "10px", width: "50%" }} onClick={() => setMyModal({ isOpen: true })} placeholder='Search in Tech Sea'></IonSearchbar>
+              >
+              </IonActionSheet>
+
+              <IonSearchbar style={{ padding: "10px", width: "50%" }} onClick={() => setMyModal({ isOpen: true })} placeholder='Search in Tech Sea' className='hidden md:block'></IonSearchbar>
               <div style={{ display: "flex" }}>
-                <IonButton fill="outline">Login</IonButton>
-                <IonButton className='ml-[10px]'>SignUp</IonButton>
+
+                <IonButton fill="outline" className='hidden md:block'>Login</IonButton>
+                <IonButton className='ml-[10px] hidden md:block'>SignUp</IonButton>
               </div>
             </div>
             <IonIcon icon={themeToggle ? moon : sunny} style={{ color: themeToggle ? 'orange' : 'orange', marginTop: "22px" }} slot='end' className='moon' />
@@ -208,4 +189,4 @@ const Example: React.FunctionComponent = () => {
   );
 };
 
-export default Example;
+export default Navbar;

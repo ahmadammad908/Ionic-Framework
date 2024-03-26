@@ -9,7 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 
 // Assuming Example is a component
-import Example from './Navbar';
+import Navbar from './Navbar';
 
 interface FormData {
   title: string;
@@ -93,7 +93,7 @@ const Add = () => {
           getDownloadURL(uploadImage.snapshot.ref).then((url) => {
             imageDownloadUrl = url;
 
-            const articleRef = collection(db, 'Articles');
+            const articleRef = collection(db, 'products');
             addDoc(articleRef, {
               title: formData.title,
               description: formData.description,
@@ -132,7 +132,7 @@ const Add = () => {
     <>
 
       <IonHeader>
-        <Example />
+        <Navbar />
       </IonHeader>
       <IonContent>
         <div className="flex flex-col items-center justify-center min-h-screen" style={{ margin: '30px' }}>
