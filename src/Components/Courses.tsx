@@ -12,14 +12,19 @@ import {
   IonSkeletonText,
   IonButton,
 } from '@ionic/react';
-import { collection, onSnapshot, query, QuerySnapshot, where } from 'firebase/firestore';
-import { db } from '../Server/Firebase';
+
 import Navbar from './Navbar';
 import Girl from "../assets/images/girl.png.png"
 import CategoryImage from "../assets/images/walt.svg"
 import Samsung from "../assets/images/samsung.svg"
 import Cisco from "../assets/images/cisco.svg";
 import Ericsson from "../assets/images/ericsson.svg";
+
+// Define the Category interface
+interface Category {
+  id: string;
+  name: string;
+}
 
 interface Article {
   id: string;
@@ -28,66 +33,16 @@ interface Article {
   imageUrl: string;
 }
 
-interface Category {
-  id: string;
-  name: string;
+interface ContentProps {
+  loading: boolean;
+  articles: Article[];
+  categories: Category[];
+  handleCategoryClick: (category: string) => void;
 }
 
-const Content: React.FC = () => {
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
+const Content: React.FC<ContentProps> = ({ loading, articles, categories, handleCategoryClick }) => {
+
   const [skeletonLength, setSkeletonLength] = useState(10);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [currentCategory, setCurrentCategory] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const categoryRef = collection(db, 'categories');
-      const q = query(categoryRef);
-
-      const unsubscribe = onSnapshot(q, (snapshot: QuerySnapshot) => {
-        const updatedCategories: Category[] = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          name: doc.data().name as string,
-        }));
-        setCategories(updatedCategories);
-      });
-
-      return unsubscribe;
-    };
-
-    fetchCategories();
-  }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const articleRef = collection(db, 'products');
-      let q = query(articleRef);
-
-      if (currentCategory) {
-        q = query(articleRef, where('category', '==', currentCategory));
-      }
-
-      const unsubscribe = onSnapshot(q, (snapshot: QuerySnapshot) => {
-        const updatedArticles: Article[] = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          title: doc.data().title as string,
-          description: doc.data().description as string,
-          imageUrl: doc.data().imageUrl as string,
-        }));
-        setArticles(updatedArticles);
-        setLoading(false);
-      });
-
-      return unsubscribe;
-    };
-
-    fetchData();
-  }, [currentCategory]);
-
-  const handleCategoryClick = (category: string) => {
-    setCurrentCategory(category);
-  };
 
   useEffect(() => {
     if (articles.length > skeletonLength) {
@@ -98,7 +53,7 @@ const Content: React.FC = () => {
   return (
     <>
       <IonHeader>
-        <Navbar handleCategoryClick={handleCategoryClick} categories={categories}/>
+        <Navbar categories={categories} handleCategoryClick={handleCategoryClick}/>
       </IonHeader>
 
       <IonContent className="ion-padding">
