@@ -16,9 +16,9 @@ import {
   IonList,
   IonItem,
   IonActionSheet,
-  IonLabel
+
 } from '@ionic/react';
-import { search, close } from 'ionicons/icons';
+import { search, close, home, lockClosed, mailOutline, helpCircleOutline  } from 'ionicons/icons';
 import { moon, sunny } from 'ionicons/icons';
 
 interface NavbarProps {
@@ -79,14 +79,25 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
           </IonToolbar>
         </IonHeader>
         <IonContent className="ion-padding">
-          <IonList>
-            {categories && categories.map((category) => (
-              <IonItem key={category.id} onClick={() => handleCategoryClick(category.name)}>
-                <IonLabel>{category.name}</IonLabel>
-              </IonItem>
-            ))}
+          <IonList >
+            <IonItem style={{margin:"10px",background:"#000012"}}  >
+              <IonIcon icon={home} />
+              <p style={{marginLeft:"10px",marginTop:"9px"}}>Home</p>
+            </IonItem>
+            <IonItem style={{margin:"10px",background:"#000012"}}  >
+              <IonIcon icon={ mailOutline} />
+              <p style={{marginLeft:"10px",marginTop:"9px",}}>Contact Us</p>
+            </IonItem>
+            <IonItem style={{margin:"10px",background:"#000012"}}  >
+              <IonIcon icon={ helpCircleOutline} />
+              <p style={{marginLeft:"10px",marginTop:"9px"}}>About Us</p>
+            </IonItem>
+            <IonItem style={{margin:"10px",background:"#000012"}}  >
+              <IonIcon icon={ lockClosed } />
+              <p style={{marginLeft:"10px",marginTop:"9px"}}>Privacy Policy</p>
+            </IonItem>
             <div className='md:hidden block'>
-              <IonItem>
+              <IonItem style={{margin:"10px",background:"#000012"}}>
                 <IonButton fill="outline">Login</IonButton>
                 <IonButton className='ml-[10px]'>SignUp</IonButton>
               </IonItem>

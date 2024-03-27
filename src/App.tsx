@@ -17,6 +17,7 @@ import '@ionic/react/css/display.css';
 import Navbar from './Components/Navbar';
 import Content from './Components/Courses';
 import AdminPanel from './Components/AdminPanel';
+import Home from './Components/Home';
 import { getTheme, isIos, setTheme } from "../src/Utils/Utils";
 import { db } from './Server/Firebase';
 import { collection, onSnapshot, query, QuerySnapshot, where, Unsubscribe } from 'firebase/firestore';
@@ -33,18 +34,6 @@ interface Category {
   id: string;
   name: string;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //////////////////////IOS////////////////////////////////////////////////////////////////////////////////IOS./////////////////////////////////////////
@@ -136,6 +125,8 @@ function App() {
             <Route path="/" element={<Content loading={loading} articles={articles} categories={categories} handleCategoryClick={ handleCategoryClick}/>} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path='/blog/:id' element={<Blog/>}></Route>
+            <Route path='/home' element={<Home handleCategoryClick={handleCategoryClick} categories={categories}/>}></Route>
+
           </Routes>
       </Router>
     </IonApp>
