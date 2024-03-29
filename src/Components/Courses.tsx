@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,createRef } from 'react';
 import {
   IonContent,
   IonHeader,
@@ -32,16 +32,24 @@ interface Article {
   description: string;
   imageUrl: string;
 }
+const contentRef = createRef<HTMLIonContentElement>();
+const scrollToBottom = () => {
+  // Passing a duration to the method makes it so the scroll slowly
+  // goes to the bottom instead of instantly
+  contentRef.current?.scrollToBottom(500);
+};
 
 interface ContentProps {
   loading: boolean;
   articles: Article[];
   categories: Category[];
   handleCategoryClick: (category: string) => void;
+  // Added contentRef
+
 }
 
-const Content: React.FC<ContentProps> = ({ loading, articles, categories, handleCategoryClick }) => {
-
+const Content: React.FC<ContentProps> = ({ loading, articles, categories, handleCategoryClick}) => {
+  
   const [skeletonLength, setSkeletonLength] = useState(10);
 
   useEffect(() => {
@@ -53,10 +61,10 @@ const Content: React.FC<ContentProps> = ({ loading, articles, categories, handle
   return (
     <>
       <IonHeader>
-        <Navbar categories={categories} handleCategoryClick={handleCategoryClick}/>
+        <Navbar categories={categories} handleCategoryClick={handleCategoryClick}  scrollToBottom={ scrollToBottom}/>
       </IonHeader>
 
-      <IonContent className="ion-padding">
+      <IonContent className="ion-padding" ref={contentRef} >
         <div className='mt-[100px] p-[30px]  flex justify-between'>
           <div>
             <h1 className='font-bold text-6xl italic md:text-start text-center'>Skills <span className='text-blue-400'>that drive you forward</span></h1>

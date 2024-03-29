@@ -1,12 +1,13 @@
 import './App.css';
 import '@ionic/react/css/core.css';
-import { IonApp,setupIonicReact } from '@ionic/react';
+import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Import BrowserRouter
 import Blog from './Components/CourseData';
 import '@ionic/react/css/normalize.css';
 import '@ionic/react/css/structure.css';
 import '@ionic/react/css/typography.css';
-import {useState,useEffect} from 'react';
+import { useState, useEffect } from 'react';
+import {createRef} from 'react';
 /* Optional CSS utils that can be commented out */
 import '@ionic/react/css/padding.css';
 import '@ionic/react/css/float-elements.css';
@@ -18,10 +19,11 @@ import Navbar from './Components/Navbar';
 import Content from './Components/Courses';
 import AdminPanel from './Components/AdminPanel';
 import Home from './Components/Home';
-import { getTheme, isIos, setTheme } from "../src/Utils/Utils";
+import { getTheme, isIos, setTheme } from "./Utils/Utils";
 import { db } from './Server/Firebase';
 import { collection, onSnapshot, query, QuerySnapshot, where, Unsubscribe } from 'firebase/firestore';
-
+import CategoriesPage from './Components/CategoriesPage';
+import BackButton from './Components/BackButton';
 
 interface Article {
   id: string;
@@ -34,8 +36,12 @@ interface Category {
   id: string;
   name: string;
 }
-
-
+const contentRef = createRef<HTMLIonContentElement>();
+const scrollToBottom = () => {
+  // Passing a duration to the method makes it so the scroll slowly
+  // goes to the bottom instead of instantly
+  contentRef.current?.scrollToBottom(500);
+};
 //////////////////////IOS////////////////////////////////////////////////////////////////////////////////IOS./////////////////////////////////////////
 
 const mode = new URLSearchParams(window.location.search).get("mode");
@@ -63,7 +69,6 @@ setTheme(getTheme());
 function App() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
-  // const [skeletonLength, setSkeletonLength] = useState(10);
   const [categories, setCategories] = useState<Category[]>([]);
   const [currentCategory, setCurrentCategory] = useState<string | null>(null);
   useEffect((): Unsubscribe | void => {
@@ -113,23 +118,31 @@ function App() {
 
   const handleCategoryClick = (category: string) => {
     setCurrentCategory(category);
+
+    // If you want to do something else on category click, you can add more logic here
+  
+    // This is just an example, you can modify this based on your route structure
+    
   };
 
-
-
   return (
-    <IonApp>
-     <Navbar categories={categories} handleCategoryClick={ handleCategoryClick} />
-      <Router>
-          <Routes>
-            <Route path="/" element={<Content loading={loading} articles={articles} categories={categories} handleCategoryClick={ handleCategoryClick}/>} />
-            <Route path="/admin" element={<AdminPanel />} />
-            <Route path='/blog/:id' element={<Blog/>}></Route>
-            <Route path='/home' element={<Home handleCategoryClick={handleCategoryClick} categories={categories}/>}></Route>
-
-          </Routes>
-      </Router>
-    </IonApp>
+    <>
+      <IonApp>
+        <Navbar categories={categories} handleCategoryClick={handleCategoryClick} scrollToBottom={scrollToBottom} />
+        <Router>
+          <IonRouterOutlet>
+            <Routes>
+              <Route path="/" element={<Content loading={loading} articles={articles} categories={categories} handleCategoryClick={handleCategoryClick} />} />
+              <Route path="/admin" element={<AdminPanel />} />
+              <Route path='/blog/:id' element={<Blog />}></Route>
+              <Route path="/cat" element={<CategoriesPage loading={loading} articles={articles} />}></Route>
+              <Route path="/home" element={<Home />}></Route>
+              <Route path='/back' element={<BackButton/>}></Route>
+            </Routes>
+          </IonRouterOutlet>
+        </Router>
+      </IonApp>
+    </>
   );
 }
 

@@ -24,9 +24,10 @@ import { moon, sunny } from 'ionicons/icons';
 interface NavbarProps {
   handleCategoryClick: (category: string) => void;
   categories: { id: string; name: string }[];
+  scrollToBottom: () => void;
 }
 
-const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, categories }) => {
+const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, categories, scrollToBottom }) => {
   const [myModal, setMyModal] = useState({ isOpen: false });
   const [themeToggle, setThemeToggle] = useState(false);
   const [isOpens, setIsOpens] = useState(false); // Corrected variable name
@@ -120,6 +121,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
               <IonActionSheet
                 isOpen={isOpens} // Corrected variable name
                 header="Categories"
+                
                 onDidDismiss={() => setIsOpens(false)} // Corrected variable name
                 buttons={[
                   ...(categories || []).map((category) => ({
@@ -127,6 +129,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
                     handler: () => {
                       console.log('Category clicked:', category.name);
                       handleCategoryClick(category.name)
+                      scrollToBottom()
                       // You can add more functionality here, like filtering articles based on category
                     }
                   })),
@@ -181,3 +184,24 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
 };
 
 export default Navbar;
+{/* <IonActionSheet
+  isOpen={isOpens}
+  header="Categories"
+  onDidDismiss={() => setIsOpens(false)}
+  buttons={[
+    ...(categories || []).map((category) => ({
+      text: (
+        <Link to={`/products/${category.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+          {category.name}
+        </Link>
+      ) as any, // Use 'as any' to let TypeScript know this is a Link component
+      handler: () => {
+        setIsOpens(false); // Close the action sheet
+      }
+    })),
+    {
+      text: 'Cancel',
+      role: 'destructive'
+    }
+  ]}
+/> */}

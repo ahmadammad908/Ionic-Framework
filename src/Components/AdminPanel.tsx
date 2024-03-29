@@ -132,7 +132,7 @@ const Add = () => {
     <>
 
       {/* <IonHeader>
-        <Navbar />
+        <Navbar />ssssss
       </IonHeader> */}
       <IonContent>
         <div className="flex flex-col items-center justify-center min-h-screen" style={{ margin: '30px' }}>
