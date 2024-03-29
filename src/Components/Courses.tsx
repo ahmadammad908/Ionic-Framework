@@ -1,4 +1,4 @@
-import React, { useState, useEffect,createRef } from 'react';
+import React, { useState, useEffect, createRef } from 'react';
 import {
   IonContent,
   IonHeader,
@@ -32,6 +32,7 @@ interface Article {
   description: string;
   imageUrl: string;
 }
+
 const contentRef = createRef<HTMLIonContentElement>();
 const scrollToBottom = () => {
   // Passing a duration to the method makes it so the scroll slowly
@@ -44,13 +45,11 @@ interface ContentProps {
   articles: Article[];
   categories: Category[];
   handleCategoryClick: (category: string) => void;
-  // Added contentRef
-
 }
 
-const Content: React.FC<ContentProps> = ({ loading, articles, categories, handleCategoryClick}) => {
-  
+const Content: React.FC<ContentProps> = ({ loading, articles, categories, handleCategoryClick }) => {
   const [skeletonLength, setSkeletonLength] = useState(10);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
 
   useEffect(() => {
     if (articles.length > skeletonLength) {
@@ -58,13 +57,19 @@ const Content: React.FC<ContentProps> = ({ loading, articles, categories, handle
     }
   }, [articles]);
 
+  // Function to handle category click
+  const handleCategorySelect = (categoryName: string) => {
+    setSelectedCategory(categoryName);
+    handleCategoryClick(categoryName); // Assuming you have a function to handle category click
+  };
+
   return (
     <>
       <IonHeader>
-        <Navbar categories={categories} handleCategoryClick={handleCategoryClick}  scrollToBottom={ scrollToBottom}/>
+        <Navbar categories={categories} handleCategoryClick={handleCategorySelect} scrollToBottom={scrollToBottom} />
       </IonHeader>
 
-      <IonContent className="ion-padding" ref={contentRef} >
+      <IonContent className="ion-padding" ref={contentRef}>
         <div className='mt-[100px] p-[30px]  flex justify-between'>
           <div>
             <h1 className='font-bold text-6xl italic md:text-start text-center'>Skills <span className='text-blue-400'>that drive you forward</span></h1>
@@ -85,7 +90,7 @@ const Content: React.FC<ContentProps> = ({ loading, articles, categories, handle
         </div>
         <IonGrid style={{ marginTop: "10px" }}>
           <div className='p-[30px]'>
-            <h1 className='font-bold text-4xl italic md:text-start text-center'>Our Latest <span className='text-blue-400'>Courses</span></h1>
+            <h1 className='font-bold text-4xl italic md:text-start text-center'>Our Latest <span className='text-blue-400'>{selectedCategory}</span> Courses</h1>
           </div>
           <IonRow>
             {loading || articles.length === 0 ? (
