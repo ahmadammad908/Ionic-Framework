@@ -19,6 +19,7 @@ import CategoryImage from "../assets/images/walt.svg"
 import Samsung from "../assets/images/samsung.svg"
 import Cisco from "../assets/images/cisco.svg";
 import Ericsson from "../assets/images/ericsson.svg";
+import { Link } from 'react-router-dom';
 
 // Define the Category interface
 interface Category {
@@ -35,9 +36,9 @@ interface Article {
 
 const contentRef = createRef<HTMLIonContentElement>();
 const scrollToBottom = () => {
-  // Passing a duration to the method makes it so the scroll slowly
-  // goes to the bottom instead of instantly
+  
   contentRef.current?.scrollToBottom(500);
+  
 };
 
 interface ContentProps {
@@ -75,7 +76,7 @@ const Content: React.FC<ContentProps> = ({ loading, articles, categories, handle
             <h1 className='font-bold text-6xl italic md:text-start text-center'>Skills <span className='text-blue-400'>that drive you forward</span></h1>
             <p className='italic mt-[30px] text-gray-500 font-bold md:text-start text-center'><span className='text-blue-400'>Tech Sea</span> Provides free of cost latest courses related for tech and <span className='text-blue-400'>computer Sciences !</span><br></br>Technology and the world of work change fast — with us, you’re faster. Get the skills to !</p>
             <div className='text-center md:text-start'>
-              <IonButton className='w-full sm:w-auto ion-color ion-color-tertiary ios button button-solid ion-activatable ion-focusable mt-[30px] font-bold'>Learn Latest Courses 🧡</IonButton>
+              <IonButton className='w-full sm:w-auto ion-color ion-color-tertiary ios button button-solid ion-activatable ion-focusable mt-[30px] font-bold'><Link to={"/cat"}>See All the courses</Link></IonButton>
             </div>
             <div className='md:flex mt-[60px] md:block hidden'>
               <img src={CategoryImage} className='mr-[50px]' alt="Category" />

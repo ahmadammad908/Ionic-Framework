@@ -116,14 +116,21 @@ function App() {
     fetchData();
   }, [currentCategory]);
 
-  const handleCategoryClick = (category: string) => {
-    setCurrentCategory(category);
+  // const handleCategoryClick = (category: string) => {
+  //   setCurrentCategory(category);
+    const handleCategoryClick = (category: string) => {
+      if (category === 'All Courses') {
+        setCurrentCategory(null); // Reset to null to fetch all articles
+      } else {
+        setCurrentCategory(category);
+      }
+    };
 
     // If you want to do something else on category click, you can add more logic here
   
     // This is just an example, you can modify this based on your route structure
     
-  };
+  
 
   return (
     <>

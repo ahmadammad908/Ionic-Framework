@@ -16,9 +16,8 @@ import {
   IonList,
   IonItem,
   IonActionSheet,
-
 } from '@ionic/react';
-import { search, close, home, lockClosed, mailOutline, helpCircleOutline  } from 'ionicons/icons';
+import { search, close, home, lockClosed, mailOutline, helpCircleOutline } from 'ionicons/icons';
 import { moon, sunny } from 'ionicons/icons';
 
 interface NavbarProps {
@@ -30,7 +29,7 @@ interface NavbarProps {
 const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, categories, scrollToBottom }) => {
   const [myModal, setMyModal] = useState({ isOpen: false });
   const [themeToggle, setThemeToggle] = useState(false);
-  const [isOpens, setIsOpens] = useState(false); // Corrected variable name
+  const [isOpens, setIsOpens] = useState(false);
 
   const closeMenu = () => {
     const menu = document.querySelector('ion-menu');
@@ -66,6 +65,17 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
     }
   };
 
+  const handleCategorySheetClick = (category: string) => {
+    if (category === 'All Courses') {
+      handleCategoryClick(category);
+      scrollToBottom();
+    } else {
+      handleCategoryClick(category);
+      scrollToBottom();
+    }
+    setIsOpens(false);
+  };
+
   return (
     <>
       <IonMenu contentId="main-content">
@@ -80,25 +90,26 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
           </IonToolbar>
         </IonHeader>
         <IonContent className="ion-padding">
-          <IonList >
-            <IonItem style={{margin:"10px",background:"#000012"}}  >
+          <IonList>
+            <IonItem style={{ margin: "10px", background: "#000012" }} >
               <IonIcon icon={home} />
-              <p style={{marginLeft:"10px",marginTop:"9px"}}>Home</p>
+              <p style={{ marginLeft: "10px", marginTop: "9px" }}>Home</p>
             </IonItem>
-            <IonItem style={{margin:"10px",background:"#000012"}}  >
-              <IonIcon icon={ mailOutline} />
-              <p style={{marginLeft:"10px",marginTop:"9px",}}>Contact Us</p>
+            <IonItem style={{ margin: "10px", background: "#000012" }} >
+              <IonIcon icon={mailOutline} />
+              <p style={{ marginLeft: "10px", marginTop: "9px" }}>Contact Us</p>
             </IonItem>
-            <IonItem style={{margin:"10px",background:"#000012"}}  >
-              <IonIcon icon={ helpCircleOutline} />
-              <p style={{marginLeft:"10px",marginTop:"9px"}}>About Us</p>
+            <IonItem style={{ margin: "10px", background: "#000012" }} >
+              <IonIcon icon={helpCircleOutline} />
+              <p style={{ marginLeft: "10px", marginTop: "9px" }}>About Us</p>
             </IonItem>
-            <IonItem style={{margin:"10px",background:"#000012"}}  >
-              <IonIcon icon={ lockClosed } />
-              <p style={{marginLeft:"10px",marginTop:"9px"}}>Privacy Policy</p>
+            <IonItem style={{ margin: "10px", background: "#000012" }} >
+              <IonIcon icon={lockClosed} />
+              <p style={{ marginLeft: "10px", marginTop: "9px" }}>Privacy Policy</p>
             </IonItem>
+       
             <div className='md:hidden block'>
-              <IonItem style={{margin:"10px",background:"#000012"}}>
+              <IonItem style={{ margin: "10px", background: "#000012" }}>
                 <IonButton fill="outline">Login</IonButton>
                 <IonButton className='ml-[10px]'>SignUp</IonButton>
               </IonItem>
@@ -119,28 +130,31 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
                 <IonButton onClick={() => setIsOpens(true)} style={{ fontSize: "14px", marginLeft: "-6px" }} fill='clear' >Categories</IonButton>
               </div>
               <IonActionSheet
-                isOpen={isOpens} // Corrected variable name
+                isOpen={isOpens}
                 header="Categories"
-                
-                onDidDismiss={() => setIsOpens(false)} // Corrected variable name
+                onDidDismiss={() => setIsOpens(false)}
                 buttons={[
+                  {
+                    text: 'All Courses',
+                    role:"cancel",
+                    handler: () => {
+                      handleCategorySheetClick('All Courses');
+                    }
+                  },
                   ...(categories || []).map((category) => ({
                     text: category.name,
                     handler: () => {
                       console.log('Category clicked:', category.name);
-                      handleCategoryClick(category.name)
-                      scrollToBottom()
-                      // You can add more functionality here, like filtering articles based on category
+                      handleCategorySheetClick(category.name);
                     }
                   })),
+                 
                   {
                     text: 'Cancel',
-                    role: 'destructive' // Changed to 'cancel' for the cancel button
+                    role: 'destructive'
                   }
                 ]}
-              >
-              </IonActionSheet>
-
+              />
               <IonSearchbar style={{ padding: "10px", width: "50%" }} onClick={() => setMyModal({ isOpen: true })} placeholder='Search in Tech Sea' className='hidden md:block'></IonSearchbar>
               <div style={{ display: "flex" }}>
                 <IonButton fill="outline" className='hidden md:block'>Login</IonButton>
@@ -153,8 +167,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
               onIonChange={toggleDarkMode}
               slot="end"
               style={{ margin: '10px', marginTop: "15px" }}
-            >
-            </IonToggle>
+            />
             <IonButtons slot="end" className='md:hidden block mt-[14px]'>
               <IonButton onClick={() => setMyModal({ isOpen: true })}>
                 <IonIcon icon={search} />
@@ -169,7 +182,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
                 showCancelButton="never"
                 placeholder="Search in Tech Sea"
                 style={{ marginTop: "10px" }}
-              ></IonSearchbar>
+              />
               <IonButtons slot="end">
                 <IonButton onClick={() => setMyModal({ isOpen: false })} style={{ color: "#3880FF80", marginTop: "10px" }}>
                   Cancel
@@ -184,24 +197,3 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
 };
 
 export default Navbar;
-{/* <IonActionSheet
-  isOpen={isOpens}
-  header="Categories"
-  onDidDismiss={() => setIsOpens(false)}
-  buttons={[
-    ...(categories || []).map((category) => ({
-      text: (
-        <Link to={`/products/${category.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-          {category.name}
-        </Link>
-      ) as any, // Use 'as any' to let TypeScript know this is a Link component
-      handler: () => {
-        setIsOpens(false); // Close the action sheet
-      }
-    })),
-    {
-      text: 'Cancel',
-      role: 'destructive'
-    }
-  ]}
-/> */}

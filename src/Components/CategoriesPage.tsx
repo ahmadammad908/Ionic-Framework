@@ -38,7 +38,7 @@ const CategoriesPage: React.FC<CategoriesPageProps> = ({ loading, articles }) =>
         <IonHeader>
           <BackButton />
         </IonHeader>
-        <h1>{categoryName} Category</h1>
+
 
         <IonGrid>
           <IonRow>
