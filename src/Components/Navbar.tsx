@@ -40,7 +40,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
   const [themeToggle, setThemeToggle] = useState(false);
   const [isOpens, setIsOpens] = useState(false);
   const [searchValue, setSearchValue] = useState('');
-  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [suggestions, setSuggestions] = useState<any[]>([]); // Changed to any[] for suggestions
 
   const closeMenu = () => {
     const menu = document.querySelector('ion-menu');
@@ -100,11 +100,17 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
         where("title", ">=", value),
         where("title", "<=", value.toLowerCase() + "\uf8ff")
       );
+
       const snapshot = await getDocs(q);
 
-      const suggestionsArray: string[] = [];
+      const suggestionsArray: any[] = [];
       snapshot.forEach((doc: any) => {
-        suggestionsArray.push(doc.data().title); // Assuming your document has a 'title' field
+        suggestionsArray.push({
+          id: doc.id,
+          title: doc.data().title,
+          content: doc.data().content,
+          videoUrl: doc.data().videoUrl,
+        });
       });
 
       setSuggestions(suggestionsArray); // Set the fetched suggestions
@@ -116,13 +122,12 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
   const handleSearchChange = (event: CustomEvent) => {
     const value = (event.target as HTMLInputElement).value;
     setSearchValue(value);
-
     // Call the fetchSuggestions function with the new value
     fetchSuggestions(value);
   };
 
-  const handleSuggestionClick = (suggestion: string) => {
-    setSearchValue(suggestion);
+  const handleSuggestionClick = (suggestion: any) => {
+    setSearchValue(suggestion.title);
     setSuggestions([]); // Clear suggestions
     // You can do something with the selected suggestion, like perform a search
   };
@@ -241,21 +246,22 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
                   Cancel
                 </IonButton>
               </IonButtons>
-              {
-                suggestions.length > 0 && (
+           
                   <IonList>
                     {
                       suggestions.map((suggestion, id) => (
-                        <Link to={`/blog/${id}`} key={id}>
+                       <div key={id}>
+                         <Link to={`/blog/${suggestion.id}`}>
                           <IonItem onClick={() => handleSuggestionClick(suggestion)}>
-                            <IonLabel>{suggestion}</IonLabel>
+                            <IonLabel>{suggestion.title}</IonLabel>
                           </IonItem>
                         </Link>
+                       </div>
                       ))
                     }
                   </IonList>
-                )
-              }
+                
+              
             </IonToolbar>
           </IonModal>
         </IonContent>
