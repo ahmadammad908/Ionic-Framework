@@ -24,7 +24,11 @@ const Blog: React.FC = () => {
 
     const docRef = doc(db, "products", id);
     const unsubscribe = onSnapshot(docRef, (snapshot) => {
-      setArticle({ ...snapshot.data(), id: snapshot.id } as Article);
+      if (snapshot.exists()) {
+        setArticle({ ...snapshot.data(), id: snapshot.id } as Article);
+      } else {
+        console.log('Document does not exist!');
+      }
     });
 
     return () => {
@@ -34,35 +38,22 @@ const Blog: React.FC = () => {
 
   return (
     <>
-      {/* <IonHeader>
-        <>
-        <Example/>
-        </>
-      </IonHeader>  */}
-      
       <IonContent>
         <IonHeader>
-          <BackButton/>
+          <BackButton />
         </IonHeader>
-      {article && (
-        <div>
-          <h2 style={{ marginTop: '200px' }}>{article.title}</h2>
-          {article.videoUrl && ( // Check if videoUrl is not null
-            <video src={article.videoUrl} controls style={{ width: "300px" }}></video>
-          )}
-        </div>
-      )}
+        {article && (
+          <div>
+            <h2 style={{ marginTop: '200px' }}>{article.title}</h2>
+            {article.videoUrl && (
+              <video src={article.videoUrl} controls style={{ width: "300px" }}></video>
+            )}
+            <p>{article.content}</p>
+          </div>
+        )}
       </IonContent>
     </>
   );
 };
 
 export default Blog;
-
-// const CourseData = () => {
-//   return (
-//     <div>CourseData</div>
-//   )
-// }
-
-// export default CourseData

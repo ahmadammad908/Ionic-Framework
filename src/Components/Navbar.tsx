@@ -16,9 +16,18 @@ import {
   IonList,
   IonItem,
   IonActionSheet,
+  IonLabel,
 } from '@ionic/react';
 import { search, close, home, lockClosed, mailOutline, helpCircleOutline } from 'ionicons/icons';
 import { moon, sunny } from 'ionicons/icons';
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
+import { Link } from 'react-router-dom';
 
 interface NavbarProps {
   handleCategoryClick: (category: string) => void;
@@ -30,6 +39,8 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
   const [myModal, setMyModal] = useState({ isOpen: false });
   const [themeToggle, setThemeToggle] = useState(false);
   const [isOpens, setIsOpens] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
+  const [suggestions, setSuggestions] = useState<string[]>([]);
 
   const closeMenu = () => {
     const menu = document.querySelector('ion-menu');
@@ -76,6 +87,46 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
     setIsOpens(false);
   };
 
+  const firestore = getFirestore();
+
+  const fetchSuggestions = async (value: string) => {
+    try {
+      if (value.trim() === '') {
+        setSuggestions([]);
+        return;
+      }
+
+      const q = query(collection(firestore, 'products'),
+        where("title", ">=", value),
+        where("title", "<=", value.toLowerCase() + "\uf8ff")
+      );
+      const snapshot = await getDocs(q);
+
+      const suggestionsArray: string[] = [];
+      snapshot.forEach((doc: any) => {
+        suggestionsArray.push(doc.data().title); // Assuming your document has a 'title' field
+      });
+
+      setSuggestions(suggestionsArray); // Set the fetched suggestions
+    } catch (err) {
+      console.error('Error getting documents', err);
+    }
+  };
+
+  const handleSearchChange = (event: CustomEvent) => {
+    const value = (event.target as HTMLInputElement).value;
+    setSearchValue(value);
+
+    // Call the fetchSuggestions function with the new value
+    fetchSuggestions(value);
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setSearchValue(suggestion);
+    setSuggestions([]); // Clear suggestions
+    // You can do something with the selected suggestion, like perform a search
+  };
+
   return (
     <>
       <IonMenu contentId="main-content">
@@ -107,7 +158,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
               <IonIcon icon={lockClosed} />
               <p style={{ marginLeft: "10px", marginTop: "9px" }}>Privacy Policy</p>
             </IonItem>
-       
+
             <div className='md:hidden block'>
               <IonItem style={{ margin: "10px", background: "#000012" }}>
                 <IonButton fill="outline">Login</IonButton>
@@ -127,7 +178,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
             <IonTitle style={{ textAlign: "start", paddingLeft: "50px" }} className="overflow-hidden overflow-ellipsis overflow-x-hidden" id='title'>Tech Sea</IonTitle>
             <div className=' md:flex md:justify-center '>
               <div className='flex justify-end'>
-                <IonButton onClick={() => setIsOpens(true)} style={{ fontSize: "14px", marginLeft: "-6px", marginTop:"5.9px" }} fill='clear' >Categories</IonButton>
+                <IonButton onClick={() => setIsOpens(true)} style={{ fontSize: "14px", marginLeft: "-6px", marginTop: "5.9px" }} fill='clear' >Categories</IonButton>
               </div>
               <IonActionSheet
                 isOpen={isOpens}
@@ -136,7 +187,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
                 buttons={[
                   {
                     text: 'All Courses',
-                    role:"cancel",
+                    role: "cancel",
                     handler: () => {
                       handleCategorySheetClick('All Courses');
                     }
@@ -148,14 +199,14 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
                       handleCategorySheetClick(category.name);
                     }
                   })),
-                 
+
                   {
                     text: 'Cancel',
                     role: 'destructive'
                   }
                 ]}
               />
-              <IonSearchbar style={{ padding: "10px", width: "50%" }} onClick={() => setMyModal({ isOpen: true })} placeholder='Search in Tech Sea' className='hidden md:block'></IonSearchbar>
+              <IonSearchbar style={{ padding: "10px", width: "50%" }} onClick={() => setMyModal({ isOpen: true })} placeholder='Search in Tech Sea' onIonChange={handleSearchChange} className='hidden md:block'></IonSearchbar>
               <div style={{ display: "flex" }}>
                 <IonButton fill="outline" className='hidden md:block'>Login</IonButton>
                 <IonButton className='ml-[10px] hidden md:block'>SignUp</IonButton>
@@ -179,6 +230,8 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
           <IonModal isOpen={myModal.isOpen}>
             <IonToolbar>
               <IonSearchbar
+                value={searchValue}
+                onIonChange={handleSearchChange}
                 showCancelButton="never"
                 placeholder="Search in Tech Sea"
                 style={{ marginTop: "10px" }}
@@ -188,6 +241,21 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
                   Cancel
                 </IonButton>
               </IonButtons>
+              {
+                suggestions.length > 0 && (
+                  <IonList>
+                    {
+                      suggestions.map((suggestion, id) => (
+                        <Link to={`/blog/${id}`} key={id}>
+                          <IonItem onClick={() => handleSuggestionClick(suggestion)}>
+                            <IonLabel>{suggestion}</IonLabel>
+                          </IonItem>
+                        </Link>
+                      ))
+                    }
+                  </IonList>
+                )
+              }
             </IonToolbar>
           </IonModal>
         </IonContent>
