@@ -111,6 +111,7 @@ const Content: React.FC<ContentProps> = ({ loading, articles, categories, handle
             ) : (
               articles.map(({ id, title, description, imageUrl }) => (
                 <IonCol key={id} size="6" size-md="4" size-lg="2">
+                  <Link  to={`/blog/${id}`}>
                   <IonCard className='ion-activatable recipe group hover:scale-95 ios'>
                     <>
                       <img alt={`Image for ${title}`} src={imageUrl} className='h-[15vh] w-[100%]' />
@@ -120,6 +121,8 @@ const Content: React.FC<ContentProps> = ({ loading, articles, categories, handle
                       </IonCardHeader>
                     </>
                   </IonCard>
+                  </Link>
+                 
                 </IonCol>
               ))
             )}
