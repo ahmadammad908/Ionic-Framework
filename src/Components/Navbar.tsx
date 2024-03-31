@@ -17,6 +17,7 @@ import {
   IonItem,
   IonActionSheet,
   IonLabel,
+
 } from '@ionic/react';
 import { search, close, home, lockClosed, mailOutline, helpCircleOutline } from 'ionicons/icons';
 import { moon, sunny } from 'ionicons/icons';
@@ -40,7 +41,8 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
   const [themeToggle, setThemeToggle] = useState(false);
   const [isOpens, setIsOpens] = useState(false);
   const [searchValue, setSearchValue] = useState('');
-  const [suggestions, setSuggestions] = useState<any[]>([]); // Changed to any[] for suggestions
+  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false); // State for loading indicator
 
   const closeMenu = () => {
     const menu = document.querySelector('ion-menu');
@@ -96,6 +98,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
         return;
       }
 
+      setLoading(true); // Show loading indicator
       const q = query(collection(firestore, 'products'),
         where("title", ">=", value),
         where("title", "<=", value.toLowerCase() + "\uf8ff")
@@ -113,17 +116,18 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
         });
       });
 
-      setSuggestions(suggestionsArray); // Set the fetched suggestions
+      setSuggestions(suggestionsArray);
     } catch (err) {
       console.error('Error getting documents', err);
+    } finally {
+      setLoading(false); // Hide loading indicator
     }
   };
 
   const handleSearchChange = (event: CustomEvent) => {
     const value = (event.target as HTMLInputElement).value;
     setSearchValue(value);
-    // Call the fetchSuggestions function with the new value
-    fetchSuggestions(value);
+    fetchSuggestions(value); // Fetch suggestions on each keystroke
   };
 
   const handleSuggestionClick = (suggestion: any) => {
@@ -211,7 +215,14 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
                   }
                 ]}
               />
-              <IonSearchbar style={{ padding: "10px", width: "50%" }} onClick={() => setMyModal({ isOpen: true })} placeholder='Search in Tech Sea' onIonChange={handleSearchChange} className='hidden md:block'></IonSearchbar>
+              <IonSearchbar
+                style={{ padding: "10px", width: "50%" }}
+                onClick={() => setMyModal({ isOpen: true })}
+                placeholder='Search in Tech Sea'
+                value={searchValue}
+                onIonInput={handleSearchChange} // Change here from onIonChange to onIonInput
+                className='hidden md:block'
+              />
               <div style={{ display: "flex" }}>
                 <IonButton fill="outline" className='hidden md:block'>Login</IonButton>
                 <IonButton className='ml-[10px] hidden md:block'>SignUp</IonButton>
@@ -236,7 +247,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
             <IonToolbar>
               <IonSearchbar
                 value={searchValue}
-                onIonChange={handleSearchChange}
+                onIonInput={handleSearchChange} // Change here from onIonChange to onIonInput
                 showCancelButton="never"
                 placeholder="Search in Tech Sea"
                 style={{ marginTop: "10px" }}
@@ -246,23 +257,28 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
                   Cancel
                 </IonButton>
               </IonButtons>
-           
-                  <IonList>
-                    {
-                      suggestions.map((suggestion, id) => (
-                       <div key={id}>
-                         <Link to={`/blog/${suggestion.id}`}>
+            </IonToolbar>
+            <div style={{ top: "20px" }} className='min-h-[100vh]'>
+              <IonList>
+                {
+                  loading ? (
+                    <IonItem>
+                      <IonLabel>Loading...</IonLabel>
+                    </IonItem>
+                  ) : (
+                    suggestions.map((suggestion, id) => (
+                      <div key={id}>
+                        <Link to={`/blog/${suggestion.id}`}>
                           <IonItem onClick={() => handleSuggestionClick(suggestion)}>
                             <IonLabel>{suggestion.title}</IonLabel>
                           </IonItem>
                         </Link>
-                       </div>
-                      ))
-                    }
-                  </IonList>
-                
-              
-            </IonToolbar>
+                      </div>
+                    ))
+                  )
+                }
+              </IonList>
+            </div>
           </IonModal>
         </IonContent>
       </IonPage>
