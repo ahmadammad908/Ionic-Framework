@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IonContent } from '@ionic/react';
+import { IonContent, IonHeader } from '@ionic/react';
 import { Timestamp, collection, addDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage, db } from '../Server/Firebase';
@@ -7,6 +7,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { useNavigate } from 'react-router-dom';
+import BackButton from './BackButton';
 
 // Assuming Example is a component
 // import Navbar from './Navbar';
@@ -131,19 +132,19 @@ const Add = () => {
   return (
     <>
 
-      {/* <IonHeader>
-        <Navbar />ssssss
-      </IonHeader> */}
+      <IonHeader>
+       <BackButton/>
+      </IonHeader>
       <IonContent>
-        <div className="flex flex-col items-center justify-center min-h-screen" style={{ margin: '30px' }}>
-          <div className="bg-white shadow-md rounded-md p-8 max-w-sm w-full">
+        <div className="flex flex-col items-center justify-center min-h-screen" style={{ margin: '30px', }} >
+          <div className="bg-white shadow-md rounded-md p-8 max-w-sm w-full  ">
 
             <>
-              <h2 className="text-xl font-bold mb-6 text-center">Create an article</h2>
-              <div className="space-y-4">
+              <h2 className="text-xl font-bold mb-6 text-center text-black">Upload <span className='text-blue-500'>Courses</span></h2>
+              <div className="space-y-4  ">
                 <div>
-                  <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-                    Title
+                  <label htmlFor="title" className="block text-sm font-bold text-gray-700">
+                    What's Your Course Name....
                   </label>
                   <input
                     type="text"
@@ -151,27 +152,27 @@ const Add = () => {
                     name="title"
                     value={formData.title}
                     onChange={handleChange}
-                    className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2"
-                    placeholder="Enter your title"
+                    className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full border-2 border-gray-300 rounded-md px-3 py-2 text-sm  focus:outline-none focus:ring-2 focus:ring-offset-2 text-black font-bold"
+                    placeholder="Course Name..."
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                    Subtitle
+                  <label htmlFor="description" className="block text-sm font-bold text-gray-700">
+                   Write Your Course Description....
                   </label>
                   <input
                     id="description"
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
-                    className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2"
-                    placeholder="Subtitle"
+                    className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full border-2 border-gray-300 rounded-md px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 text-black font-bold"
+                    placeholder="Course Description"
                   ></input>
                 </div>
                 <div>
                   <div className="col-span-full">
-                    <label htmlFor="image" className="block text-sm font-medium leading-6 text-gray-900">
+                    <label htmlFor="image" className="block text-sm font-bold leading-6 text-gray-900">
                       Upload Image
                     </label>
                     <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
@@ -193,19 +194,20 @@ const Add = () => {
                             htmlFor="image"
                             className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
                           >
-                            <span>Select File</span>
+                            <span className='font-bold'>Select File</span>
                             <input
                               type="file"
                               id="image"
                               onChange={handleImageChange}
                               name="image"
                               accept="image/*"
-                              className="sr-only"
+                              className="sr-only border-2 border-gray-500"
+
                             />
                           </label>
                         </div>
-                        <span className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 10MB</span>
-                        <span className="ml-2 text-sm text-gray-500" id="image-label">
+                        <span className="text-xs leading-5 text-gray-600 font-bold">PNG, JPG, GIF up to 10MB</span>
+                        <span className="ml-2 text-sm text-gray-500" id="image-label font-bold">
                           {formData.image && formData.image.name}
                         </span>
                       </div>
@@ -213,7 +215,7 @@ const Add = () => {
                   </div>
                 </div>
                 <div>
-                  <label htmlFor="video" className="block text-sm font-medium leading-6 text-gray-900">
+                  <label htmlFor="video" className="block text-sm  leading-6 text-gray-900 font-bold">
                     Upload Video
                   </label>
                   <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
@@ -238,12 +240,12 @@ const Add = () => {
                             onChange={handleVideoChange}
                             name="video"
                             accept="video/*"
-                            className="sr-only"
+                            className="sr-only font-bold"
                           />
                         </label>
                       </div>
-                      <span className="text-xs leading-5 text-gray-600">MP4, MOV, AVI up to 100MB</span>
-                      <span className="ml-2 text-sm text-gray-500" id="video-label">
+                      <span className="text-xs leading-5 text-gray-600 font-bold">MP4, MOV, AVI up to 100MB</span>
+                      <span className="ml-2 text-sm text-gray-500" id="video-label font-bold">
                         {formData.video && formData.video.name}
                       </span>
                     </div>
@@ -260,14 +262,14 @@ const Add = () => {
                       ></div>
                     </div>
                     <div className="text-center">
-                      <span className="text-sm font-medium text-gray-500">Loading ({progress}%)</span>
+                      <span className="text-sm font-bold text-gray-500">Loading ({progress}%)</span>
                     </div>
                   </div>
                 )}
 
                 <button
                   onClick={handlePublish}
-                  className="block w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="block w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
                   Publish
                 </button>
