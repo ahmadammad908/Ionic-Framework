@@ -8,7 +8,9 @@
   object-fit: cover;
 }
 
-
+#family{
+  font-family: cursive;
+}
 
 
 @media only screen and (max-width: 298px) {
