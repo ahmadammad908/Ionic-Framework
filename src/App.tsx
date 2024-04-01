@@ -135,8 +135,9 @@ function App() {
   return (
     <>
       <IonApp>
-        <Navbar categories={categories} handleCategoryClick={handleCategoryClick} scrollToBottom={scrollToBottom}  />
         <Router>
+        <Navbar categories={categories} handleCategoryClick={handleCategoryClick} scrollToBottom={scrollToBottom}  />
+
           <IonRouterOutlet>
             <Routes>
               <Route path="/" element={<Content loading={loading} articles={articles} categories={categories} handleCategoryClick={handleCategoryClick} />} />

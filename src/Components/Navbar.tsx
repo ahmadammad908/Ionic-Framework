@@ -19,7 +19,7 @@ import {
   IonLabel,
   IonSpinner
 } from '@ionic/react';
-import { search, close, home, lockClosed, mailOutline, helpCircleOutline } from 'ionicons/icons';
+import { search, close } from 'ionicons/icons';
 import { moon, sunny } from 'ionicons/icons';
 import {
   getFirestore,
@@ -44,6 +44,12 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [showNoResults, setShowNoResults] = useState(false);
+
+  // const handleBackClick = (event: React.MouseEvent<HTMLIonButtonElement, MouseEvent>) => {
+  //   event.preventDefault(); // Prevent default behavior
+  //   navigate('/admin');
+  // };
+
 
   const closeMenu = () => {
     const menu = document.querySelector('ion-menu');
@@ -160,24 +166,25 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
         <IonContent className="ion-padding">
           <IonList>
             <IonItem style={{ margin: "10px", background: "#000012" }} >
-              <IonIcon icon={home} />
-              <p style={{ marginLeft: "10px", marginTop: "9px" }}>Home</p>
+              Home
             </IonItem>
             <IonItem style={{ margin: "10px", background: "#000012" }} >
-              <IonIcon icon={mailOutline} />
-              <p style={{ marginLeft: "10px", marginTop: "9px" }}>Contact Us</p>
+              Contact Us
             </IonItem>
             <IonItem style={{ margin: "10px", background: "#000012" }} >
-              <IonIcon icon={helpCircleOutline} />
-              <p style={{ marginLeft: "10px", marginTop: "9px" }}>About Us</p>
+              About Us
             </IonItem>
             <IonItem style={{ margin: "10px", background: "#000012" }} >
-              <IonIcon icon={lockClosed} />
-              <p style={{ marginLeft: "10px", marginTop: "9px" }}>Privacy Policy</p>
+              Privacy Policy
+            </IonItem>
+            <IonItem>
+              <Link to={"/admin"}> 
+              <IonButton fill="outline" onClick={closeMenu}>Admin Panel</IonButton>
+              </Link>
             </IonItem>
 
             <div className='md:hidden block'>
-              <IonItem style={{ margin: "10px", background: "#000012" }}>
+              <IonItem style={{ background: "#000012"}}>
                 <IonButton fill="outline">Login</IonButton>
                 <IonButton className='ml-[10px]'>SignUp</IonButton>
               </IonItem>
@@ -232,6 +239,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
                 className='hidden md:block'
               />
               <div style={{ display: "flex" }}>
+
                 <IonButton fill="outline" className='hidden md:block'>Login</IonButton>
                 <IonButton className='ml-[10px] hidden md:block'>SignUp</IonButton>
               </div>
@@ -275,14 +283,14 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
 
                   </IonItem>
                 ) : showNoResults ? (
-                 <div className=''>
-                   <IonItem>
-                    <IonLabel style={{color:"#EB445A"}} className='font-bold '>No results found</IonLabel>
-                    
-                    <IonButton color={"danger"}  onClick={() => setMyModal({ isOpen: false })} >Retry</IonButton>
-                  </IonItem>
-                
-                 </div>
+                  <div className=''>
+                    <IonItem>
+                      <IonLabel style={{ color: "#EB445A" }} className='font-bold '>No results found</IonLabel>
+
+                      <IonButton color={"danger"} onClick={() => setMyModal({ isOpen: false })} >Retry</IonButton>
+                    </IonItem>
+
+                  </div>
                 ) : (
                   suggestions.map((suggestion, id) => (
                     <div key={id}>

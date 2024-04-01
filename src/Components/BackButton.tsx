@@ -1,18 +1,25 @@
-import { IonBackButton, IonButtons, IonTitle, IonToolbar } from '@ionic/react';
+import { IonButton, IonButtons, IonTitle, IonToolbar ,IonIcon} from '@ionic/react';
+import { useNavigate } from 'react-router-dom';
+import { arrowBack } from 'ionicons/icons';
+
 const BackButton = () => {
-    return (
-        <>
+  const navigate = useNavigate();
 
-            <IonToolbar>
-                <IonButtons slot="start">
-                    <IonBackButton defaultHref="/"></IonBackButton>
-                </IonButtons>
-                <IonTitle>Tech Sea</IonTitle>
+  const handleBack = () => {
+    navigate(-1); // Go back to the previous location in history
+  };
 
-            </IonToolbar>
+  return (
+    <IonToolbar>
+      <IonButtons slot="start">
+        <IonButton onClick={handleBack}>
+        <IonIcon icon={arrowBack} />
+          Back
+        </IonButton>
+      </IonButtons>
+      <IonTitle>Tech Sea</IonTitle>
+    </IonToolbar>
+  );
+};
 
-        </>
-    )
-}
-
-export default BackButton
+export default BackButton;
