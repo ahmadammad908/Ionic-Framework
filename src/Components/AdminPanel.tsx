@@ -9,13 +9,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import BackButton from './BackButton';
 
-// Assuming Example is a component
-// import Navbar from './Navbar';
-
 interface FormData {
   title: string;
   description: string;
+  course: string;
   image: File | null;
+  poster: File | null;
   video: File | null;
   createdAt: Date;
 }
@@ -26,7 +25,9 @@ const Add = () => {
   const [formData, setFormData] = useState<FormData>({
     title: '',
     description: '',
+    course: '',
     image: null,
+    poster: null,
     video: null,
     createdAt: Timestamp.now().toDate(),
   });
@@ -38,6 +39,14 @@ const Add = () => {
       setFormData({ ...formData, image: selectedImage });
     }
   };
+
+  const handlePosterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const selectedPoster = e.target.files[0];
+      setFormData({ ...formData, poster: selectedPoster });
+    }
+  };
+
   const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const selectedVideo = e.target.files[0];
@@ -45,28 +54,41 @@ const Add = () => {
     }
   };
 
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
   const handlePublish = () => {
-    if (!formData.title || !formData.description || !formData.image || !formData.video) {
+    if (!formData.title || !formData.description || !formData.course || !formData.image || !formData.poster || !formData.video) {
       toast.error('Please fill all the fields');
       return;
     }
 
     const imageStorageRef = ref(storage, `/images/${Date.now()}${formData.image.name}`);
     const videoStorageRef = ref(storage, `/videos/${Date.now()}${formData.video.name}`);
+    const posterStorageRef = ref(storage, `/poster/${Date.now()}${formData.poster.name}`);
 
     const uploadImage = uploadBytesResumable(imageStorageRef, formData.image);
     const uploadVideo = uploadBytesResumable(videoStorageRef, formData.video);
+    const uploadPoster = uploadBytesResumable(posterStorageRef, formData.poster);
 
     let imageDownloadUrl = '';
     let videoDownloadUrl = '';
+    let posterDownloadUrl = '';
 
     const imageUploadTask = uploadImage.on(
+      'state_changed',
+      (snapshot) => {
+        const progressPercent = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+        setProgress(progressPercent);
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+
+    const posterUploadTask = uploadPoster.on(
       'state_changed',
       (snapshot) => {
         const progressPercent = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
@@ -87,42 +109,49 @@ const Add = () => {
         console.log(err);
       },
       () => {
-        getDownloadURL(uploadVideo.snapshot.ref).then((url) => {
-          videoDownloadUrl = url;
+        getDownloadURL(uploadPoster.snapshot.ref).then((url) => {
+          posterDownloadUrl = url;
+          getDownloadURL(uploadVideo.snapshot.ref).then((url) => {
+            videoDownloadUrl = url;
 
-          // Once both image and video are uploaded, save data to Firestore
-          getDownloadURL(uploadImage.snapshot.ref).then((url) => {
-            imageDownloadUrl = url;
+            // Once both image and video are uploaded, save data to Firestore
+            getDownloadURL(uploadImage.snapshot.ref).then((url) => {
+              imageDownloadUrl = url;
 
-            const articleRef = collection(db, 'products');
-            addDoc(articleRef, {
-              title: formData.title,
-              description: formData.description,
-              imageUrl: imageDownloadUrl,
-              videoUrl: videoDownloadUrl,
-              createdAt: formData.createdAt,
-              likes: [],
-              comments: [],
-            })
-              .then(() => {
-                toast.success('Article added successfully');
-                setProgress(0);
-                navigate('/');
+              const articleRef = collection(db, 'products');
+              addDoc(articleRef, {
+                title: formData.title,
+                description: formData.description,
+                course: formData.course,
+                imageUrl: imageDownloadUrl,
+                posterUrl: posterDownloadUrl,
+                videoUrl: videoDownloadUrl,
+                createdAt: formData.createdAt,
+                likes: [],
+                comments: [],
               })
-              .catch(() => {
-                toast.error('Error adding article');
-              });
+                .then(() => {
+                  toast.success('Article added successfully');
+                  setProgress(0);
+                  navigate('/');
+                })
+                .catch(() => {
+                  toast.error('Error adding article');
+                });
+            });
           });
-        });
+        })
       }
     );
 
     // Clean up
-    Promise.all([imageUploadTask, videoUploadTask]).then(() => {
+    Promise.all([imageUploadTask, videoUploadTask, posterUploadTask]).then(() => {
       setFormData({
         title: '',
         description: '',
+        course: '',
         image: null,
+        poster: null,
         video: null,
         createdAt: Timestamp.now().toDate(),
       });
@@ -131,17 +160,15 @@ const Add = () => {
 
   return (
     <>
-
       <IonHeader>
-       <BackButton/>
+        <BackButton />
       </IonHeader>
       <IonContent>
-        <div className="flex flex-col items-center justify-center min-h-screen" style={{ margin: '30px', }} >
-          <div className="bg-white shadow-md rounded-md p-8 max-w-sm w-full  ">
-
+        <div className="flex flex-col items-center justify-center min-h-screen" style={{ margin: '30px' }}>
+          <div className="bg-white shadow-md rounded-md p-8 max-w-sm w-full">
             <>
               <h2 className="text-xl font-bold mb-6 text-center text-black">Upload <span className='text-blue-500'>Courses</span></h2>
-              <div className="space-y-4  ">
+              <div className="space-y-4">
                 <div>
                   <label htmlFor="title" className="block text-sm font-bold text-gray-700">
                     What's Your Course Name....
@@ -156,10 +183,9 @@ const Add = () => {
                     placeholder="Course Name..."
                   />
                 </div>
-
                 <div>
                   <label htmlFor="description" className="block text-sm font-bold text-gray-700">
-                   Write Your Course Description....
+                    Write Your Course Description....
                   </label>
                   <input
                     id="description"
@@ -168,7 +194,59 @@ const Add = () => {
                     onChange={handleChange}
                     className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full border-2 border-gray-300 rounded-md px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 text-black font-bold"
                     placeholder="Course Description"
-                  ></input>
+                  />
+                </div>
+                <div>
+                  <label htmlFor="description" className="block text-sm font-bold text-gray-700">
+                    Course Headlines
+                  </label>
+                  <input
+                    id="course"
+                    name="course"
+                    value={formData.course}
+                    onChange={handleChange}
+                    className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full border-2 border-gray-300 rounded-md px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 text-black font-bold"
+                    placeholder="Course Headlines"
+                  />
+                </div>
+                <div>
+                  <div className="col-span-full">
+                    <label htmlFor="image" className="block text-sm font-bold leading-6 text-gray-900">
+                      Upload Video Thumbnail
+                    </label>
+                    <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                      <div className="text-center">
+                        <svg
+                          className="mx-auto h-12 w-12 text-gray-300"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          aria-hidden="true"
+                        >
+                          {/* Add your video thumbnail upload icon SVG */}
+                        </svg>
+                        <div className="mt-4 flex justify-center text-sm leading-6 text-gray-600">
+                          <label
+                            htmlFor="videoThumbnail"
+                            className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                          >
+                            <span>Select File</span>
+                            <input
+                              type="file"
+                              id="videoThumbnail"
+                              onChange={handlePosterChange}
+                              name="poster"
+                              accept="image/*"
+                              className="sr-only border-2 border-gray-500"
+                            />
+                          </label>
+                        </div>
+                        <span className="text-xs leading-5 text-gray-600 font-bold">PNG, JPG, GIF up to 10MB</span>
+                        <span className="ml-2 text-sm text-gray-500" id="videoThumbnail-label font-bold">
+                          {formData.poster && formData.poster.name}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <div>
                   <div className="col-span-full">
@@ -183,18 +261,14 @@ const Add = () => {
                           fill="currentColor"
                           aria-hidden="true"
                         >
-                          <path
-                            fillRule="evenodd"
-                            d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z"
-                            clipRule="evenodd"
-                          />
+                          {/* Add your image upload icon SVG */}
                         </svg>
                         <div className="mt-4 flex justify-center text-sm leading-6 text-gray-600">
                           <label
                             htmlFor="image"
                             className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
                           >
-                            <span className='font-bold'>Select File</span>
+                            <span>Select File</span>
                             <input
                               type="file"
                               id="image"
@@ -202,7 +276,6 @@ const Add = () => {
                               name="image"
                               accept="image/*"
                               className="sr-only border-2 border-gray-500"
-
                             />
                           </label>
                         </div>
@@ -251,8 +324,6 @@ const Add = () => {
                     </div>
                   </div>
                 </div>
-
-
                 {progress > 0 && (
                   <div className="relative pt-1">
                     <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-indigo-200">
@@ -266,7 +337,6 @@ const Add = () => {
                     </div>
                   </div>
                 )}
-
                 <button
                   onClick={handlePublish}
                   className="block w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -275,7 +345,6 @@ const Add = () => {
                 </button>
               </div>
             </>
-
           </div>
           <ToastContainer
             position="bottom-center"
@@ -290,9 +359,7 @@ const Add = () => {
             theme="dark"
           />
         </div>
-
       </IonContent>
-
     </>
   );
 };

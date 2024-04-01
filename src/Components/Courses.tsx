@@ -49,7 +49,7 @@ interface ContentProps {
 }
 
 const Content: React.FC<ContentProps> = ({ loading, articles, categories, handleCategoryClick }) => {
-  const [skeletonLength, setSkeletonLength] = useState(10);
+  const [skeletonLength, setSkeletonLength] = useState(12);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
 
   useEffect(() => {
