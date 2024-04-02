@@ -17,7 +17,8 @@ import {
   IonItem,
   IonActionSheet,
   IonLabel,
-  IonSpinner
+
+  IonSkeletonText,
 } from '@ionic/react';
 import { search, close } from 'ionicons/icons';
 import { moon, sunny } from 'ionicons/icons';
@@ -97,7 +98,6 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
   };
 
   const firestore = getFirestore();
-
   const fetchSuggestions = async (value: string) => {
     try {
       if (value.trim() === '') {
@@ -107,34 +107,40 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
       }
 
       setLoading(true);
-      const q = query(collection(firestore, 'products'),
-        where("title", ">=", value),
-        where("title", "<=", value.toLowerCase() + "\uf8ff")
-      );
 
-      const snapshot = await getDocs(q);
+      // Simulate loading for at least 2 minutes
+      setTimeout(async () => {
+        const q = query(collection(firestore, 'products'),
+          where("title", ">=", value),
+          where("title", "<=", value.toLowerCase() + "\uf8ff")
+        );
 
-      const suggestionsArray: any[] = [];
-      snapshot.forEach((doc: any) => {
-        suggestionsArray.push({
-          id: doc.id,
-          title:doc.data().title,
-          content: doc.data().content,
-          videoUrl: doc.data().videoUrl,
+        const snapshot = await getDocs(q);
+
+        const suggestionsArray: any[] = [];
+        snapshot.forEach((doc: any) => {
+          suggestionsArray.push({
+            id: doc.id,
+            title: doc.data().title,
+            content: doc.data().content,
+            videoUrl: doc.data().videoUrl,
+          });
         });
-      });
 
-      setSuggestions(suggestionsArray);
+        setSuggestions(suggestionsArray);
 
-      if (suggestionsArray.length === 0) {
-        setShowNoResults(true); // Show "No results found" message
-      } else {
-        setShowNoResults(false); // Hide "No results found" message
-      }
+        if (suggestionsArray.length === 0) {
+          setShowNoResults(true); // Show "No results found" message
+        } else {
+          setShowNoResults(false); // Hide "No results found" message
+        }
+
+        setLoading(false); // Turn off loading after 2 minutes
+      }, 1000); // 120000 milliseconds = 2 minutes
+
     } catch (err) {
       console.error('Error getting documents', err);
-    } finally {
-      setLoading(false);
+      setLoading(false); // Turn off loading if there's an error
     }
   };
 
@@ -178,13 +184,13 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
               Privacy Policy
             </IonItem>
             <IonItem>
-              <Link to={"/admin"}> 
-              <IonButton fill="outline" onClick={closeMenu}>Admin Panel</IonButton>
+              <Link to={"/admin"}>
+                <IonButton fill="outline" onClick={closeMenu}>Admin Panel</IonButton>
               </Link>
             </IonItem>
 
             <div className='md:hidden block'>
-              <IonItem style={{ background: "#000012"}}>
+              <IonItem style={{ background: "#000012" }}>
                 <IonButton fill="outline">Login</IonButton>
                 <IonButton className='ml-[10px]'>SignUp</IonButton>
               </IonItem>
@@ -277,11 +283,21 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
             <div style={{ top: "20px" }} className='min-h-[100vh]'>
               <IonList>
                 {loading ? (
-                  <IonItem>
-                    <IonLabel className='font-bold '>Loading...</IonLabel>
-                    <IonSpinner name="lines" color="primary" />
 
-                  </IonItem>
+                  <>
+                    <div className='m-[20px]'>
+                      <IonSkeletonText animated style={{ width: '100%', height: '20px' }} />
+                      <IonSkeletonText animated style={{ width: '100%', height: '20px' }} />
+                      <IonSkeletonText animated style={{ width: '100%', height: '20px' }} />
+                      <IonSkeletonText animated style={{ width: '100%', height: '20px' }} />
+                      <IonSkeletonText animated style={{ width: '100%', height: '20px' }} />
+                    
+
+                    </div>
+
+                  </>
+
+
                 ) : showNoResults ? (
                   <div className=''>
                     <IonItem>
