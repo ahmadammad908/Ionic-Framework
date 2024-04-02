@@ -16,6 +16,7 @@ interface FormData {
   image: File | null;
   poster: File | null;
   video: File | null;
+
   createdAt: Date;
 }
 
@@ -126,6 +127,7 @@ const Add = () => {
                 imageUrl: imageDownloadUrl,
                 posterUrl: posterDownloadUrl,
                 videoUrl: videoDownloadUrl,
+
                 createdAt: formData.createdAt,
                 likes: [],
                 comments: [],
@@ -154,6 +156,7 @@ const Add = () => {
         poster: null,
         video: null,
         createdAt: Timestamp.now().toDate(),
+
       });
     });
   };
@@ -171,7 +174,7 @@ const Add = () => {
               <div className="space-y-4">
                 <div>
                   <label htmlFor="title" className="block text-sm font-bold text-gray-700">
-                    What's Your Course Name....
+                    What's Your Course title....
                   </label>
                   <input
                     type="text"
@@ -180,7 +183,7 @@ const Add = () => {
                     value={formData.title}
                     onChange={handleChange}
                     className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full border-2 border-gray-300 rounded-md px-3 py-2 text-sm  focus:outline-none focus:ring-2 focus:ring-offset-2 text-black font-bold"
-                    placeholder="Course Name..."
+                    placeholder="Course title..."
                   />
                 </div>
                 <div>
@@ -198,7 +201,7 @@ const Add = () => {
                 </div>
                 <div>
                   <label htmlFor="description" className="block text-sm font-bold text-gray-700">
-                    Course Headlines...
+                    Course Outline...
                   </label>
                   <input
                     id="course"
@@ -209,6 +212,8 @@ const Add = () => {
                     placeholder="Course Headlines..."
                   />
                 </div>
+              
+
                 <div>
                   <div className="col-span-full">
                     <label htmlFor="image" className="block text-sm font-bold leading-6 text-gray-900">

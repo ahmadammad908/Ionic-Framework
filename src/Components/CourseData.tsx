@@ -14,6 +14,7 @@ interface Article {
   posterUrl: string | null;
   createdAt: { seconds: number; nanoseconds: number };
   paragraph: string
+  Outline:string
   
 }
 
@@ -70,7 +71,7 @@ const Blog: React.FC = () => {
               </div>
 
               <div className="p-[10px] md:pl-[100px] text-center md:text-start">
-                <h1 className="text-4xl lg:text-5xl font-bold lg:tracking-tight mt-1 lg:leading-tight font-myCustomCursive " id="family">{article.title}</h1>
+                <h1 className="text-4xl lg:text-5xl font-bold lg:tracking-tight mt-1 lg:leading-tight font-myCustomCursive " id="family">{article.Outline}</h1>
               </div>
               <div className="p-[10px] md:pl-[100px] text-start   flex flex-wrap ">
                 {article.createdAt && (
@@ -102,7 +103,7 @@ const Blog: React.FC = () => {
                 )}
               </div>
               <div className="p-[10px] md:pl-[100px]  text-start pl-[32px]">
-                <h1 className="text-4xl lg:text-5xl font-bold lg:tracking-tight mt-1 lg:leading-tight font-myCustomCursive " >Course Outline</h1>
+                <h1 className="text-4xl lg:text-5xl font-bold lg:tracking-tight mt-1 lg:leading-tight font-myCustomCursive " id="family" >Course Outline</h1>
               </div>
               <div className="mt-[0px] p-[10px] md:pl-[100px]  prose prose-lg mt-6 max-w-3xl pl-[40px] ">
                 <p className="font-bold text-gray-500" id="family">{article.course}</p>

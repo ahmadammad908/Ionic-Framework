@@ -118,7 +118,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
       snapshot.forEach((doc: any) => {
         suggestionsArray.push({
           id: doc.id,
-          title: doc.data().title,
+          title:doc.data().title,
           content: doc.data().content,
           videoUrl: doc.data().videoUrl,
         });

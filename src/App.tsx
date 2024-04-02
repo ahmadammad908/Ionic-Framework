@@ -1,6 +1,6 @@
 import './App.css';
 import '@ionic/react/css/core.css';
-import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
+import { IonApp, IonRouterOutlet, setupIonicReact} from '@ionic/react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Import BrowserRouter
 import Blog from './Components/CourseData';
 import '@ionic/react/css/normalize.css';
@@ -139,6 +139,7 @@ function App() {
         <Navbar categories={categories} handleCategoryClick={handleCategoryClick} scrollToBottom={scrollToBottom}  />
 
           <IonRouterOutlet>
+            
             <Routes>
               <Route path="/" element={<Content loading={loading} articles={articles} categories={categories} handleCategoryClick={handleCategoryClick} />} />
               <Route path="/admin" element={<AdminPanel />} />
