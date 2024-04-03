@@ -2,7 +2,11 @@ import { doc, onSnapshot } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "../Server/Firebase";
-import { IonContent, IonHeader } from "@ionic/react";
+import {
+  IonContent,
+  IonHeader,
+  IonSkeletonText,
+} from "@ionic/react";
 import BackButton from "./BackButton";
 
 interface Article {
@@ -13,9 +17,8 @@ interface Article {
   videoUrl: string | null;
   posterUrl: string | null;
   createdAt: { seconds: number; nanoseconds: number };
-  paragraph: string
-  Outline: string
-
+  paragraph: string;
+  Outline: string;
 }
 
 const DEFAULT_POSTER_URL = "https://example.com/default-poster.jpg";
@@ -23,9 +26,9 @@ const DEFAULT_POSTER_URL = "https://example.com/default-poster.jpg";
 const Blog: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [article, setArticle] = useState<Article | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if id exists, if not, return early
     if (!id) {
       return;
     }
@@ -37,6 +40,7 @@ const Blog: React.FC = () => {
       } else {
         console.log('Document does not exist!');
       }
+      setLoading(false); // Set loading to false once data is fetched
     });
 
     return () => {
@@ -52,7 +56,6 @@ const Blog: React.FC = () => {
     const month = months[date.getMonth()];
     const year = date.getFullYear();
 
-
     return `${day}, ${month} ${date.getDate()}, ${year}`;
   };
 
@@ -63,50 +66,59 @@ const Blog: React.FC = () => {
           <BackButton />
         </IonHeader>
         <div className="mt-[70px]">
-          {article && (
+          {loading ? ( // Show skeleton while loading
             <>
-              
+              <div className="p-[10px] md:pl-[100px] text-center text-center w-[100%]">
+                <IonSkeletonText animated style={{  height: "10vh", marginBottom: "10px", }} className="md:w-[70%] w-[100%]"/>
+                <IonSkeletonText animated style={{  height: "10vh", marginBottom: "10px" }}  className="md:w-[70%] w-[100%]"/>
+                <IonSkeletonText animated style={{  height: "10vh", marginBottom: "10px" }}  className="md:w-[70%] w-[100%]"/>
+                <IonSkeletonText animated style={{  height: "10vh", marginBottom: "10px" }} className="md:w-[70%] w-[100%]" />
+                <IonSkeletonText animated style={{  height: "10vh", marginBottom: "10px" }}  className="md:w-[70%] w-[100%]"/>
+                <IonSkeletonText animated style={{ height: "10vh", marginBottom: "10px" }}  className="md:w-[70%] w-[100%]"/>
+                <IonSkeletonText animated style={{  height: "10vh", marginBottom: "10px" }}  className="md:w-[70%] w-[100%]"/>
+
+              </div>
+            </>
+          ) : (
+            <>
               <div className="p-[10px] md:pl-[100px] text-center md:text-start">
                 <span className="badge text-white bg-amber-500 font-bold p-[10px] rounded"> Thoughts </span>
               </div>
-
               <div className="p-[10px] md:pl-[100px] text-center md:text-start">
-                <h1 className="text-4xl lg:text-5xl font-bold lg:tracking-tight mt-1 lg:leading-tight font-myCustomCursive " id="family">{article.Outline}</h1>
+                <h1 className="text-4xl lg:text-5xl font-bold lg:tracking-tight mt-1 lg:leading-tight font-myCustomCursive" id="family">{article?.Outline}</h1>
               </div>
-              <div className="p-[10px] md:pl-[100px] text-start   flex flex-wrap ">
-                {article.createdAt && (
-                  <p className="text-gray-400 font-bold ml-[30px] md:ml-[0px]" id="family"> {formatDate(new Date(article.createdAt.seconds * 1000))}</p>
+              <div className="p-[10px] md:pl-[100px] text-start flex flex-wrap">
+                {article?.createdAt && (
+                  <p className="text-gray-400 font-bold ml-[30px] md:ml-[0px]" id="family">{formatDate(new Date(article.createdAt.seconds * 1000))}</p>
                 )}
-
-                <div className="w-full md:w-auto flex flex-wrap gap-3 mt-[20px] md:mt-[0px] " >
-                  <span className="badge badge-sm bg-pink-200 text-pink-800 ml-[30px] p-[3px]  rounded">
+                <div className="w-full md:w-auto flex flex-wrap gap-3 mt-[20px] md:mt-[0px]">
+                  <span className="badge badge-sm bg-pink-200 text-pink-800 ml-[30px] p-[3px] rounded">
                     #interviews
                   </span>
-                  <span className="badge badge-sm bg-pink-200 text-pink-800 ml-[30px]  p-[3px]  rounded">
+                  <span className="badge badge-sm bg-pink-200 text-pink-800 ml-[30px] p-[3px] rounded">
                     #recruiters
                   </span>
-                  <span className="badge badge-sm bg-pink-200 text-pink-800 ml-[30px]  p-[3px]  rounded">
+                  <span className="badge badge-sm bg-pink-200 text-pink-800 ml-[30px] p-[3px] rounded">
                     #coding-challenges
                   </span>
-                  <span className="badge badge-sm bg-pink-200 text-pink-800 ml-[20px]  p-[3px] rounded">
+                  <span className="badge badge-sm bg-pink-200 text-pink-800 ml-[20px] p-[3px] rounded">
                     #programming
                   </span>
-
                 </div>
               </div>
-              <div className="mt-[30px] p-[10px] md:pl-[100px]  prose prose-lg mt-6 max-w-7xl pl-[40px] ">
-                <p className="font-bold text-gray-500" id="family">{article.paragraph}</p>
+              <div className="mt-[30px] p-[10px] md:pl-[100px] prose prose-lg mt-6 max-w-7xl pl-[40px]">
+                <p className="font-bold text-gray-500" id="family">{article?.paragraph}</p>
               </div>
-              <div className="mt-[30px] p-[10px] md:pl-[100px] ">
-                {article.videoUrl && (
-                  <video src={article.videoUrl} controls style={{ width: "1000px", }} poster={article.posterUrl || DEFAULT_POSTER_URL}></video>
+              <div className="mt-[30px] p-[10px] md:pl-[100px]">
+                {article?.videoUrl && (
+                  <video src={article.videoUrl} controls style={{ width: "1000px" }} poster={article.posterUrl || DEFAULT_POSTER_URL}></video>
                 )}
               </div>
-              <div className="p-[10px] md:pl-[100px]  text-start pl-[32px]">
-                <h1 className="text-4xl lg:text-5xl font-bold lg:tracking-tight mt-1 lg:leading-tight font-myCustomCursive " id="family" >Course Outline</h1>
+              <div className="p-[10px] md:pl-[100px] text-start pl-[32px]">
+                <h1 className="text-4xl lg:text-5xl font-bold lg:tracking-tight mt-1 lg:leading-tight font-myCustomCursive" id="family">Course Outline</h1>
               </div>
-              <div className="mt-[0px] p-[10px] md:pl-[100px]  prose prose-lg mt-6 max-w-7xl pl-[40px] ">
-                <p className="font-bold text-gray-500" id="family">{article.course}</p>
+              <div className="mt-[0px] p-[10px] md:pl-[100px] prose prose-lg mt-6 max-w-7xl pl-[40px]">
+                <p className="font-bold text-gray-500" id="family">{article?.course}</p>
               </div>
             </>
           )}
