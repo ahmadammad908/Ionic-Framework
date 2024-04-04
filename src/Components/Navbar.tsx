@@ -30,6 +30,7 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { Link } from 'react-router-dom';
+import Google from "../assets/images/Google.png"
 
 interface NavbarProps {
   handleCategoryClick: (category: string) => void;
@@ -341,9 +342,9 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
           </IonModal>
 
           {/* Login Form Modal */}
-          <IonModal isOpen={showLoginForm} style={{ width: "100%" }}>
+          <IonModal isOpen={showLoginForm} style={{ width: "100%",  }}>
             <IonContent className="ion-padding">
-              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", height: "55vh" }}>
+              <div style={{ display: "flex", flexDirection: "column", }} className='md:ml-[30px] mt-[50px]'>
                 <div className='flex justify-center text-3xl' style={{ marginBottom: "30px" }}>
                   <h1 className='text-3xl font-bold'>Log in to your <span className='text-blue-400'>Tech Sea</span> account</h1>
                 </div>
@@ -358,7 +359,11 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
 
                   </IonItem>
                   <IonButton expand="block" onClick={handleLogin} style={{ marginTop: "20px" }} className='font-bold'>Login</IonButton>
-                  <IonButton expand="block" onClick={handleSignUpForm} color="medium" style={{ marginTop: "10px" }}>Don't have an account? Sign Up</IonButton>
+                  <IonButton expand="block" onClick={handleLoginForm} color="medium" style={{ marginTop: "10px" }}>Cancel</IonButton>
+                  <div className='flex justify-center'>
+                    <p className='font-bold'>Don't have an account? </p>
+                    <button className='mt-[1px] m-[5px] font-bold text-blue-500' onClick={handleSignUpForm}>Sign Up</button>
+                  </div>
                 </IonList>
               </div>
             </IonContent>
@@ -367,8 +372,8 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
           {/* SignUp Form Modal */}
           <IonModal isOpen={showSignUpForm} style={{ width: "100%" }}>
             <IonContent className="ion-padding">
-              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", height: "55vh" }}>
-                <div className='flex justify-center text-3xl' style={{ marginBottom: "30px" }}>
+              <div style={{ display: "flex", flexDirection: "column"}} className='md:ml-[30px]' >
+                <div className='flex justify-center text-3xl' style={{ marginBottom: "15px" }}>
                   <h1 className='text-3xl font-bold'>Sign up and <span className='text-blue-400'>Start Learning </span></h1>
                 </div>
                 <IonList style={{ maxWidth: "500px", width: "100%" }}>
@@ -379,18 +384,24 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
                     <IonInput label="Email" labelPlacement="floating" fill="outline" type="email" value={signupEmail} onIonChange={(e) => setSignupEmail(e.detail.value!)} className='font-bold'></IonInput>
                   </IonItem>
                   <IonItem>
-                  <IonInput label="Password" labelPlacement="floating" fill="outline" type={showPassword ? 'text' : 'password'} value={password} onIonChange={(e) => setPassword(e.detail.value!)} className='font-bold'>
-                  </IonInput>
-                  <IonIcon slot="end" icon={showPassword ? eyeOff : eye} onClick={togglePasswordVisibility} />
+                    <IonInput label="Password" labelPlacement="floating" fill="outline" type={showPassword ? 'text' : 'password'} value={password} onIonChange={(e) => setPassword(e.detail.value!)} className='font-bold'>
+                    </IonInput>
+                    <IonIcon slot="end" icon={showPassword ? eyeOff : eye} onClick={togglePasswordVisibility} />
 
                   </IonItem>
-                  
+
                   <IonButton expand="block" onClick={handleSignUp} style={{ marginTop: "20px" }} className='font-bold'>Sign Up</IonButton>
+                  <div>
+                    <img src={Google} style={{width:"10%", zIndex:"50",left:"130px"}} className='absolute p-[10px] md:block hidden '></img>
+                    <IonButton expand="block" color="medium" style={{ marginTop: "10px" }} className='font-bold'>Login With Google</IonButton>
+                  </div>
                   <IonButton expand="block" onClick={handleSignUpForm} color="medium" style={{ marginTop: "10px" }}>Cancel</IonButton>
+
                   <div className='flex justify-center'>
-                    <p className='font-bold'>Don't have an account? </p>
+                    <p className='font-bold'>Already have an account? </p>
                     <button onClick={() => { handleLoginForm(); }} className='mt-[1px] m-[5px] font-bold text-blue-500'> Login</button>
                   </div>
+
                 </IonList>
               </div>
             </IonContent>
