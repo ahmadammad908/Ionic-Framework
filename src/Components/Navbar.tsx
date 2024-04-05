@@ -33,6 +33,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Google from "../assets/images/Google.png";
 import { auth } from "../Server/Firebase";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, onAuthStateChanged, signOut } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -64,7 +65,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
 
   useEffect(() => {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
+
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme !== null) {
       setThemeToggle(savedTheme === 'dark');
@@ -154,7 +155,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
         setLoading(false);
       }, 1000);
 
-    } catch (err:any) {
+    } catch (err: any) {
       console.error('Error getting documents', err);
       setLoading(false);
     }
@@ -188,18 +189,16 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
       console.log('User logged in:', userCredential.user);
       localStorage.setItem('loggedInUserEmail', email);
 
-
-      setTimeout(()=> {
+      setTimeout(() => {
         setShowLoginForm(false);
-
-      },2000)
+      }, 2000)
       setEmail('');
       setPassword('');
       toast.success("Welcome Back")
 
       // Redirect to home page after successful login
       navigate("/");
-    } catch (err:any) {
+    } catch (err: any) {
       console.error('Login error:', err.message);
       toast.error(err.message);
     }
@@ -236,7 +235,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
       }, 2000);
       toast.success("Sign up successful!");
       navigate("/"); // Redirect to home page after signup
-    } catch (err:any) {
+    } catch (err: any) {
       console.error('Sign up error:', err.message);
       toast.error(err.message);
     }
@@ -254,11 +253,37 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
       toast.success("Logged out successfully!");
       localStorage.removeItem('loggedInUserEmail');
       navigate("/");
-    } catch (err:any) {
+    } catch (err: any) {
       console.error('Logout error:', err.message);
       toast.error(err.message);
     }
   };
+
+  const handleGoogleSignUp = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const userCredential = await signInWithPopup(auth, provider);
+
+      // Check if displayName is not null before updating profile
+      if (userCredential.user.displayName !== null) {
+        await updateProfile(userCredential.user, {
+          displayName: userCredential.user.displayName,
+        });
+      }
+
+      // localStorage.setItem('loggedInUserEmail', userCredential.user.email);
+      setTimeout(() => {
+        setShowSignUpForm(false);
+      }, 2000);
+      toast.success("Sign up with Google successful!");
+      navigate("/");
+    } catch (err: any) {
+      console.error('Google Sign Up error:', err.message);
+      toast.error(err.message);
+    }
+  };
+
+
 
   return (
     <>
@@ -292,18 +317,24 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
                 <IonButton fill="outline" onClick={closeMenu}>Admin Panel</IonButton>
               </Link>
             </IonItem>
-
             <div className='md:hidden block'>
-              {user ? (
-                <IonItem style={{ background: "#000012" }}>
-                  <IonButton fill="outline" onClick={handleLogout}>Logout</IonButton>
-                </IonItem>
-              ) : (
-                <IonItem style={{ background: "#000012" }}>
-                  <IonButton fill="outline" onClick={handleLoginForm}>Login</IonButton>
-                  <IonButton className='ml-[10px]' onClick={handleSignUpForm}>SignUp</IonButton>
-                </IonItem>
-              )}
+              {
+                user ? (
+                  <>
+                    <IonItem>
+                      <IonButton fill="outline"
+                       onClick={handleLogout}>Logout</IonButton>
+                    </IonItem>
+                  </>
+                ) : (
+                  <>
+                  <IonItem style={{ background: "#000012" }}>
+                    <IonButton fill="outline" onClick={handleLoginForm}>Login</IonButton>
+                    <IonButton className='ml-[10px]' onClick={handleSignUpForm}>SignUp</IonButton>
+
+                  </IonItem></>
+                )
+              }
             </div>
           </IonList>
         </IonContent>
@@ -356,12 +387,12 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
                 className='hidden md:block'
               />
               <div style={{ display: "flex" }}>
-                
+
                 {user ? (
-                 <>
-                 
-                  <IonButton fill="outline" className='hidden md:block' onClick={handleLogout}>Logout</IonButton>
-                 </>
+                  <>
+
+                    <IonButton fill="outline" className='hidden md:block' onClick={handleLogout}>Logout</IonButton>
+                  </>
                 ) : (
                   <>
                     <IonButton fill="outline" className='hidden md:block' onClick={handleLoginForm}>Login</IonButton>
@@ -385,7 +416,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
           </IonToolbar>
         </IonHeader>
         <IonContent className="ion-padding">
-        
+
           <IonModal isOpen={myModal.isOpen}>
             <IonToolbar>
               <IonSearchbar
@@ -401,8 +432,8 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
                 </IonButton>
               </IonButtons>
             </IonToolbar>
-            
-            <div style={{ top: "20px" }} className='min-h-[100vh]'>
+
+            <div style={{ top: "10px" }} className='min-h-[100vh]'>
               <IonList>
                 {loading ? (
                   <div className='m-[20px]'>
@@ -437,8 +468,10 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
           {/* Login Form Modal */}
           <IonModal isOpen={showLoginForm} style={{ width: "100%", }}>
             <IonContent className="ion-padding">
+
               <div style={{ display: "flex", flexDirection: "column", }} className='md:ml-[30px] mt-[50px]'>
-                <ToastContainer/>
+                <ToastContainer />
+
                 <div className='flex justify-center text-3xl' style={{ marginBottom: "30px" }}>
                   <h1 className='text-3xl font-bold'>Log in to your <span className='text-blue-400'>Tech Sea</span> account</h1>
                 </div>
@@ -454,10 +487,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
                   </IonItem>
                   <IonButton expand="block" onClick={handleLogin} style={{ marginTop: "20px" }} className='font-bold'>Login</IonButton>
                   <IonButton expand="block" onClick={handleLoginForm} color="medium" style={{ marginTop: "10px" }}>Cancel</IonButton>
-                  <div className='flex justify-center'>
-                    <p className='font-bold'>Don't have an account? </p>
-                    <button className='mt-[1px] m-[5px] font-bold text-blue-500' onClick={handleSignUpForm}>Sign Up</button>
-                  </div>
+
                 </IonList>
               </div>
             </IonContent>
@@ -467,6 +497,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
           <IonModal isOpen={showSignUpForm} style={{ width: "100%" }}>
             <IonContent className="ion-padding">
               <div style={{ display: "flex", flexDirection: "column" }} className='md:ml-[30px]' >
+                <ToastContainer />
                 <div className='flex justify-center text-3xl' style={{ marginBottom: "15px" }}>
                   <h1 className='text-3xl font-bold'>Sign up and <span className='text-blue-400'>Start Learning </span></h1>
                 </div>
@@ -484,21 +515,18 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
 
                   </IonItem>
 
-                  <IonButton expand="block" onClick={() => handleSignUp()} style={{ marginTop: "20px" }}  type='submit' >Sign Up</IonButton>
+                  <IonButton expand="block" onClick={() => handleSignUp()} style={{ marginTop: "20px" }} type='submit' >Sign Up</IonButton>
                   <div>
                     <img src={Google} style={{ width: "10%", zIndex: "50", left: "130px" }} className='absolute p-[10px] md:block hidden ' alt="Google Logo" />
-                    <IonButton expand="block" color="medium" style={{ marginTop: "10px" }} className='font-bold'>Login With Google</IonButton>
+                    <IonButton expand="block" color="medium" style={{ marginTop: "10px" }} className='font-bold' onClick={handleGoogleSignUp}>Login With Google</IonButton>
                   </div>
                   <IonButton expand="block" onClick={handleSignUpForm} color="medium" style={{ marginTop: "10px" }}>Cancel</IonButton>
 
-                  <div className='flex justify-center'>
-                    <p className='font-bold'>Already have an account? </p>
-                    <button onClick={handleLoginForm} className='mt-[1px] m-[5px] font-bold text-blue-500'> Login</button>
-                  </div>
+
 
                 </IonList>
               </div>
-              <ToastContainer/>
+              <ToastContainer />
             </IonContent>
           </IonModal>
         </IonContent>

@@ -25,6 +25,8 @@ import { collection, onSnapshot, query, QuerySnapshot, where, Unsubscribe } from
 import CategoriesPage from './Components/CategoriesPage';
 import BackButton from './Components/BackButton';
 
+
+
 interface Article {
   id: string;
   title: string;
@@ -136,6 +138,7 @@ function App() {
     <>
       <IonApp>
         <Router>
+
         <Navbar categories={categories} handleCategoryClick={handleCategoryClick} scrollToBottom={scrollToBottom}  />
 
           <IonRouterOutlet>
@@ -147,6 +150,8 @@ function App() {
               <Route path="/cat" element={<CategoriesPage loading={loading} articles={articles} />}></Route>
               <Route path="/home" element={<Home />}></Route>
               <Route path='/back' element={<BackButton/>}></Route>
+              {/* <Route path='/login' element={<Login/>}></Route>
+              <Route path='/signUp' element={<SignUp/>}></Route> */}
             </Routes>
           </IonRouterOutlet>
         </Router>

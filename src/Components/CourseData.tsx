@@ -1,13 +1,23 @@
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "../Server/Firebase";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import {
-  IonContent,
-  IonHeader,
-  IonSkeletonText,
+  IonContent, IonHeader, IonIcon, IonSkeletonText, IonButton,
+  IonModal,
+  IonList,
+  IonItem,
+  IonInput,
 } from "@ionic/react";
 import BackButton from "./BackButton";
+import { heart, eye, eyeOff } from 'ionicons/icons';
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../Server/Firebase";
+import Google from "../assets/images/Google.png"
 
 interface Article {
   id: string;
@@ -19,6 +29,7 @@ interface Article {
   createdAt: { seconds: number; nanoseconds: number };
   paragraph: string;
   Outline: string;
+  likes: string[]; // Assuming likes is an array of user IDs
 }
 
 const DEFAULT_POSTER_URL = "https://example.com/default-poster.jpg";
@@ -27,6 +38,87 @@ const Blog: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showSignUpForm, setShowSignUpForm] = useState(false);
+  const [signupEmail, setSignupEmail] = useState('');
+  const [signupPassword, setSignupPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [name, setName] = useState("");
+
+  const [user] = useAuthState(auth);
+
+  const handleNameChange = (event: CustomEvent) => {
+    const value = (event.target as HTMLInputElement).value;
+    setName(value);
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleSignUp = async () => {
+    try {
+      // Check if any of the fields are empty
+      if (!name || !signupEmail || !signupPassword) {
+        toast.error("Please fill out all fields");
+        return;
+      }
+
+      const userCredential = await createUserWithEmailAndPassword(auth, signupEmail, signupPassword);
+      await updateProfile(userCredential.user, { displayName: name });
+      setShowSignUpForm(false);
+      toast.success("Sign up successful!");
+    } catch (err: any) {
+      console.error('Sign up error:', err.message);
+      toast.error(err.message);
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const userCredential = await signInWithPopup(auth, provider);
+
+      // Check if displayName is not null before updating profile
+      if (userCredential.user.displayName !== null) {
+        await updateProfile(userCredential.user, {
+          displayName: userCredential.user.displayName,
+        });
+      }
+
+      setShowSignUpForm(false);
+      toast.success("Sign up with Google successful!");
+      
+    } catch (err: any) {
+      console.error('Google Sign Up error:', err.message);
+      toast.error(err.message);
+    }
+  };
+
+  const handleLike = () => {
+    if (!user) {
+      setShowSignUpForm(true); // Show sign-up form if user is not logged in
+      return;
+    }
+
+    if (article) {
+      const articleLikes = article.likes || [];
+      const userLiked = articleLikes.includes(user.uid);
+
+      const updatedLikes = userLiked
+        ? articleLikes.filter(uid => uid !== user.uid) // Remove user's like
+        : [...articleLikes, user.uid]; // Add user's like
+
+      if (id) {
+        updateDoc(doc(db, "products", id), { likes: updatedLikes })
+          .then(() => {
+            console.log(userLiked ? "Unliked" : "Liked");
+          })
+          .catch((error) => {
+            console.error("Error updating document: ", error);
+          });
+      }
+    }
+  };
 
   useEffect(() => {
     if (!id) {
@@ -36,11 +128,12 @@ const Blog: React.FC = () => {
     const docRef = doc(db, "products", id);
     const unsubscribe = onSnapshot(docRef, (snapshot) => {
       if (snapshot.exists()) {
-        setArticle({ ...snapshot.data(), id: snapshot.id } as Article);
+        const data = snapshot.data() as Article;
+        setArticle({ ...data, id: snapshot.id });
       } else {
         console.log('Document does not exist!');
       }
-      setLoading(false); // Set loading to false once data is fetched
+      setLoading(false);
     });
 
     return () => {
@@ -66,17 +159,16 @@ const Blog: React.FC = () => {
           <BackButton />
         </IonHeader>
         <div className="mt-[70px]">
-          {loading ? ( // Show skeleton while loading
+          {loading ? (
             <>
               <div className="p-[10px] md:pl-[100px] text-center text-center w-[100%]">
-                <IonSkeletonText animated style={{  height: "10vh", marginBottom: "10px", }} className="md:w-[70%] w-[100%]"/>
-                <IonSkeletonText animated style={{  height: "10vh", marginBottom: "10px" }}  className="md:w-[70%] w-[100%]"/>
-                <IonSkeletonText animated style={{  height: "10vh", marginBottom: "10px" }}  className="md:w-[70%] w-[100%]"/>
-                <IonSkeletonText animated style={{  height: "10vh", marginBottom: "10px" }} className="md:w-[70%] w-[100%]" />
-                <IonSkeletonText animated style={{  height: "10vh", marginBottom: "10px" }}  className="md:w-[70%] w-[100%]"/>
-                <IonSkeletonText animated style={{ height: "10vh", marginBottom: "10px" }}  className="md:w-[70%] w-[100%]"/>
-                <IonSkeletonText animated style={{  height: "10vh", marginBottom: "10px" }}  className="md:w-[70%] w-[100%]"/>
-
+                <IonSkeletonText animated style={{ height: "10vh", marginBottom: "10px", }} className="md:w-[70%] w-[100%]" />
+                <IonSkeletonText animated style={{ height: "10vh", marginBottom: "10px" }} className="md:w-[70%] w-[100%]" />
+                <IonSkeletonText animated style={{ height: "10vh", marginBottom: "10px" }} className="md:w-[70%] w-[100%]" />
+                <IonSkeletonText animated style={{ height: "10vh", marginBottom: "10px" }} className="md:w-[70%] w-[100%]" />
+                <IonSkeletonText animated style={{ height: "10vh", marginBottom: "10px" }} className="md:w-[70%] w-[100%]" />
+                <IonSkeletonText animated style={{ height: "10vh", marginBottom: "10px" }} className="md:w-[70%] w-[100%]" />
+                <IonSkeletonText animated style={{ height: "10vh", marginBottom: "10px" }} className="md:w-[70%] w-[100%]" />
               </div>
             </>
           ) : (
@@ -114,6 +206,18 @@ const Blog: React.FC = () => {
                   <video src={article.videoUrl} controls style={{ width: "1000px" }} poster={article.posterUrl || DEFAULT_POSTER_URL}></video>
                 )}
               </div>
+              <div className="mt-[10px] p-[10px] md:pl-[100px] flex pl-[20px]">
+                <IonIcon
+                  icon={heart}
+                  className="text-4xl"
+                  style={{
+                    cursor: "pointer",
+                    color: article?.likes && user?.uid && article.likes.includes(user.uid) ? "red" : null,
+                  }}
+                  onClick={handleLike}
+                />
+                <p className="font-bold mt-[5px] ">{article?.likes.length} likes</p>
+              </div>
               <div className="p-[10px] md:pl-[100px] text-start pl-[32px]">
                 <h1 className="text-4xl lg:text-5xl font-bold lg:tracking-tight mt-1 lg:leading-tight font-myCustomCursive" id="family">Course Outline</h1>
               </div>
@@ -124,6 +228,38 @@ const Blog: React.FC = () => {
           )}
         </div>
       </IonContent>
+      <IonModal isOpen={showSignUpForm} style={{ width: "100%" }}>
+        <IonContent className="ion-padding">
+          <div style={{ display: "flex", flexDirection: "column" }} className='md:ml-[30px]' >
+            <ToastContainer />
+            <div className='flex justify-center text-3xl' style={{ marginBottom: "15px" }}>
+              <h1 className='text-3xl font-bold'>Sign up and <span className='text-blue-400'>Start Learning </span></h1>
+            </div>
+            <IonList style={{ maxWidth: "500px", width: "100%" }}>
+              <IonItem>
+                <IonInput label="Full name" labelPlacement="floating" fill="outline" className='font-bold' value={name} onIonChange={(e) => handleNameChange(e)}></IonInput>
+              </IonItem>
+              <IonItem>
+                <IonInput label="Email" labelPlacement="floating" fill="outline" type="email" value={signupEmail} onIonChange={(e) => setSignupEmail(e.detail.value!)} className='font-bold'></IonInput>
+              </IonItem>
+              <IonItem>
+                <IonInput label="Password" labelPlacement="floating" fill="outline" type={showPassword ? 'text' : 'password'} value={signupPassword} onIonChange={(e) => setSignupPassword(e.detail.value!)} className='font-bold'>
+                </IonInput>
+                <IonIcon slot="end" icon={showPassword ? eyeOff : eye} onClick={togglePasswordVisibility} />
+
+              </IonItem>
+
+              <IonButton expand="block" onClick={() => handleSignUp()} style={{ marginTop: "20px" }} type='submit' >Sign Up</IonButton>
+              <div>
+                <img src={Google} style={{ width: "10%", zIndex: "50", left: "130px" }} className='absolute p-[10px] md:block hidden ' alt="Google Logo" />
+                <IonButton expand="block" color="medium" style={{ marginTop: "10px" }} className='font-bold' onClick={handleGoogleSignUp}>Login With Google</IonButton>
+              </div>
+              <IonButton expand="block" onClick={() => setShowSignUpForm(false)} color="medium" style={{ marginTop: "10px" }}>Cancel</IonButton>
+            </IonList>
+          </div>
+          <ToastContainer />
+        </IonContent>
+      </IonModal>
     </>
   );
 };
