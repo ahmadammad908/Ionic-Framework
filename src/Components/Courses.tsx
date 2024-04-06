@@ -50,7 +50,12 @@ interface ContentProps {
 
 const Content: React.FC<ContentProps> = ({ loading, articles, categories, handleCategoryClick }) => {
   const [skeletonLength, setSkeletonLength] = useState(12);
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>(() => {
+    // Retrieve selected category from localStorage
+    const savedCategory = localStorage.getItem('selectedCategory');
+    return savedCategory || ''; // If no category is found, default to empty string
+  });
+  const [visibleArticles, setVisibleArticles] = useState(6); // Initial number of visible articles
 
   useEffect(() => {
     if (articles.length > skeletonLength) {
@@ -62,6 +67,14 @@ const Content: React.FC<ContentProps> = ({ loading, articles, categories, handle
   const handleCategorySelect = (categoryName: string) => {
     setSelectedCategory(categoryName);
     handleCategoryClick(categoryName); // Assuming you have a function to handle category click
+
+    // Save selected category to localStorage
+    localStorage.setItem('selectedCategory', categoryName);
+  };
+
+  // Function to load more articles
+  const loadMoreArticles = () => {
+    setVisibleArticles(prev => prev + 6); // Load 6 more articles
   };
 
   return (
@@ -91,12 +104,13 @@ const Content: React.FC<ContentProps> = ({ loading, articles, categories, handle
         </div>
         <IonGrid style={{ marginTop: "10px" }}>
           <div className='p-[30px]'>
-            <h1 className='font-bold text-4xl italic md:text-start text-center'>Our Latest <span className='text-blue-400'>{selectedCategory}</span> Courses</h1>
+            <h1 className='font-bold text-4xl italic md:text-start text-center'><span className='text-blue-400'>    {selectedCategory ? `${selectedCategory}` : 'Our Latest Courses'}
+</span></h1>
           </div>
           <IonRow>
             {loading || articles.length === 0 ? (
               <>
-                {Array.from({ length: skeletonLength }).map((_, index) => (
+                {Array.from({ length: visibleArticles }).map((_, index) => (
                   <IonCol key={index} size="6" size-md="4" size-lg="2">
                     <IonCard className='ion-activatable recipe group hover:scale-95 ios hover:border-4 hover:border-blue-700'>
                       <IonSkeletonText animated style={{ width: '100%', height: '15vh' }} />
@@ -109,7 +123,7 @@ const Content: React.FC<ContentProps> = ({ loading, articles, categories, handle
                 ))}
               </>
             ) : (
-              articles.map(({ id, title, description, imageUrl }) => (
+              articles.slice(0, visibleArticles).map(({ id, title, description, imageUrl }) => (
                 <IonCol key={id} size="6" size-md="4" size-lg="2">
                   <Link  to={`/blog/${id}`}>
                   <IonCard className='ion-activatable recipe group hover:scale-95 ios'>
@@ -127,6 +141,11 @@ const Content: React.FC<ContentProps> = ({ loading, articles, categories, handle
               ))
             )}
           </IonRow>
+          {!loading && articles.length > visibleArticles && (
+            <div className="ion-text-center ion-margin">
+              <IonButton onClick={loadMoreArticles}>Load More</IonButton>
+            </div>
+          )}
         </IonGrid>
       </IonContent>
     </>

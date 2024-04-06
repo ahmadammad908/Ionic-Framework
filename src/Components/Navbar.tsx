@@ -30,11 +30,12 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { Link, useNavigate } from 'react-router-dom';
-import Google from "../assets/images/Google.png";
 import { auth } from "../Server/Firebase";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, onAuthStateChanged, signOut } from "firebase/auth";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { toast, ToastContainer } from "react-toastify";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import Google from "../assets/images/Google.png"
+
 import "react-toastify/dist/ReactToastify.css";
 
 interface NavbarProps {
@@ -60,8 +61,34 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
   const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState("");
   const [user, setUser] = useState<any>(null); // State to hold user info
+  const [selectedCategory, setSelectedCategory] = useState<string>('All Courses'); // Selected category state
 
   let navigate = useNavigate();
+
+
+  const handleGoogleSignUp = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const userCredential = await signInWithPopup(auth, provider);
+
+      // Check if displayName is not null before updating profile
+      if (userCredential.user.displayName !== null) {
+        await updateProfile(userCredential.user, {
+          displayName: userCredential.user.displayName,
+        });
+      }
+
+      // localStorage.setItem('loggedInUserEmail', userCredential.user.email);
+      setTimeout(() => {
+        setShowSignUpForm(false);
+      }, 2000);
+      toast.success("Sign up with Google successful!");
+    } catch (err: any) {
+      console.error('Google Sign Up error:', err.message);
+      toast.error(err.message);
+    }
+  };
+
 
   useEffect(() => {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -84,6 +111,13 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
       }
     });
 
+    // Check if there's a selected category in local storage
+    const savedCategory = localStorage.getItem('selectedCategory');
+    if (savedCategory) {
+      setSelectedCategory(savedCategory);
+      handleCategoryClick(savedCategory);
+    }
+
     return () => unsubscribe();
   }, []);
 
@@ -105,6 +139,8 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
   };
 
   const handleCategorySheetClick = (category: string) => {
+    setSelectedCategory(category); // Set the selected category
+    localStorage.setItem('selectedCategory', category); // Save to local storage
     if (category === 'All Courses') {
       handleCategoryClick(category);
       scrollToBottom();
@@ -259,31 +295,6 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
     }
   };
 
-  const handleGoogleSignUp = async () => {
-    try {
-      const provider = new GoogleAuthProvider();
-      const userCredential = await signInWithPopup(auth, provider);
-
-      // Check if displayName is not null before updating profile
-      if (userCredential.user.displayName !== null) {
-        await updateProfile(userCredential.user, {
-          displayName: userCredential.user.displayName,
-        });
-      }
-
-      // localStorage.setItem('loggedInUserEmail', userCredential.user.email);
-      setTimeout(() => {
-        setShowSignUpForm(false);
-      }, 2000);
-      toast.success("Sign up with Google successful!");
-      navigate("/");
-    } catch (err: any) {
-      console.error('Google Sign Up error:', err.message);
-      toast.error(err.message);
-    }
-  };
-
-
 
   return (
     <>
@@ -350,7 +361,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
             <IonTitle style={{ textAlign: "start", paddingLeft: "50px" }} className="overflow-hidden overflow-ellipsis overflow-x-hidden" id='title'>Tech Sea</IonTitle>
             <div className=' md:flex md:justify-center '>
               <div className='flex justify-end'>
-                <IonButton onClick={() => setIsOpens(true)} style={{ fontSize: "14px", marginLeft: "-6px", marginTop: "5.9px" }} fill='clear' >Categories</IonButton>
+                <IonButton onClick={() => setIsOpens(true)} style={{ fontSize: "14px", marginLeft: "-6px", marginTop: "5.9px" }} fill='clear' >{selectedCategory ? `${selectedCategory}` : 'categories'}</IonButton>
               </div>
               <IonActionSheet
                 isOpen={isOpens}
@@ -358,10 +369,10 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
                 onDidDismiss={() => setIsOpens(false)}
                 buttons={[
                   {
-                    text: 'All Courses',
+                    text: 'All Categories',
                     role: "cancel",
                     handler: () => {
-                      handleCategorySheetClick('All Courses');
+                      handleCategorySheetClick('All Categories');
                     }
                   },
                   ...(categories || []).map((category) => ({
@@ -469,11 +480,11 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
           <IonModal isOpen={showLoginForm} style={{ width: "100%", }}>
             <IonContent className="ion-padding">
 
-              <div style={{ display: "flex", flexDirection: "column", }} className='md:ml-[30px] mt-[50px]'>
+              <div style={{ display: "flex", flexDirection: "column", alignItems:"center" }} className=' mt-[50px]'>
                 <ToastContainer />
 
                 <div className='flex justify-center text-3xl' style={{ marginBottom: "30px" }}>
-                  <h1 className='text-3xl font-bold'>Log in to your <span className='text-blue-400'>Tech Sea</span> account</h1>
+                  <h1 className='text-3xl font-bold text-center'>Log in to your <span className='text-blue-400'>Tech Sea</span> account</h1>
                 </div>
                 <IonList style={{ maxWidth: "500px", width: "100%" }}>
                   <IonItem>
@@ -486,7 +497,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
 
                   </IonItem>
                   <IonButton expand="block" onClick={handleLogin} style={{ marginTop: "20px" }} className='font-bold'>Login</IonButton>
-                  <IonButton expand="block" onClick={handleLoginForm} color="medium" style={{ marginTop: "10px" }}>Cancel</IonButton>
+                  <IonButton expand="block" onClick={handleLoginForm} color={"danger"} style={{ marginTop: "10px" }}>Cancel</IonButton>
 
                 </IonList>
               </div>
@@ -494,39 +505,37 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
           </IonModal>
 
           {/* SignUp Form Modal */}
-          <IonModal isOpen={showSignUpForm} style={{ width: "100%" }}>
-            <IonContent className="ion-padding">
-              <div style={{ display: "flex", flexDirection: "column" }} className='md:ml-[30px]' >
+          <IonModal isOpen={showSignUpForm} style={{ width: "100%", }}>
+            <IonContent className="ion-padding" id='overflow-hidden'>
+
+              <div style={{ display: "flex", flexDirection: "column", alignItems:"center"}} className=' mt-[10px]  '>
                 <ToastContainer />
-                <div className='flex justify-center text-3xl' style={{ marginBottom: "15px" }}>
-                  <h1 className='text-3xl font-bold'>Sign up and <span className='text-blue-400'>Start Learning </span></h1>
+
+                <div className=' text-3xl' style={{ marginBottom: "20px" }}>
+                  <h1 className='text-3xl font-bold text-center '>Create an <span className='text-blue-400'>Tech Sea</span> account</h1>
                 </div>
-                <IonList style={{ maxWidth: "500px", width: "100%" }}>
+                <IonList style={{ maxWidth: "500px", width: "100%"}}>
                   <IonItem>
-                    <IonInput label="Full name" labelPlacement="floating" fill="outline" className='font-bold' value={name} onIonChange={(e) => handleNameChange(e)}></IonInput>
+                    <IonInput label="Name" labelPlacement="floating" fill="outline" type="text" value={name} onIonChange={(e) => handleNameChange(e)} className='font-bold'></IonInput>
                   </IonItem>
                   <IonItem>
                     <IonInput label="Email" labelPlacement="floating" fill="outline" type="email" value={signupEmail} onIonChange={(e) => setSignupEmail(e.detail.value!)} className='font-bold'></IonInput>
                   </IonItem>
                   <IonItem>
-                    <IonInput label="Password" labelPlacement="floating" fill="outline" type={showPassword ? 'text' : 'password'} value={signupPassword} onIonChange={(e) => setSignupPassword(e.detail.value!)} className='font-bold'>
-                    </IonInput>
+                    <IonInput label="Password" labelPlacement="floating" fill="outline" type={showPassword ? 'text' : 'password'} value={signupPassword} onIonChange={(e) => setSignupPassword(e.detail.value!)} className='font-bold'></IonInput>
                     <IonIcon slot="end" icon={showPassword ? eyeOff : eye} onClick={togglePasswordVisibility} />
 
                   </IonItem>
-
-                  <IonButton expand="block" onClick={() => handleSignUp()} style={{ marginTop: "20px" }} type='submit' >Sign Up</IonButton>
-                  <div>
-                    <img src={Google} style={{ width: "10%", zIndex: "50", left: "130px" }} className='absolute p-[10px] md:block hidden ' alt="Google Logo" />
-                    <IonButton expand="block" color="medium" style={{ marginTop: "10px" }} className='font-bold' onClick={handleGoogleSignUp}>Login With Google</IonButton>
+                  <IonButton expand="block" onClick={handleSignUp} style={{ marginTop: "20px" }} className='font-bold'>Sign Up</IonButton>
+                  <div className='text-center'>
+                    <img src={Google} style={{width:"30px", position:"absolute", zIndex:"20",marginTop:"10px", }} className='md:ml-[140px]  ml-[40px]'></img>
+                    <IonButton expand="block" onClick={handleGoogleSignUp} style={{ marginTop: "10px" }} className='font-bold ' color={"dark"}>Sign Up in Google</IonButton>
                   </div>
-                  <IonButton expand="block" onClick={handleSignUpForm} color="medium" style={{ marginTop: "10px" }}>Cancel</IonButton>
 
-
+                  <IonButton expand="block" onClick={handleSignUpForm} color="danger" style={{ marginTop: "10px" }} className='font-bold'>Cancel</IonButton>
 
                 </IonList>
               </div>
-              <ToastContainer />
             </IonContent>
           </IonModal>
         </IonContent>

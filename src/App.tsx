@@ -121,7 +121,7 @@ function App() {
   // const handleCategoryClick = (category: string) => {
   //   setCurrentCategory(category);
     const handleCategoryClick = (category: string) => {
-      if (category === 'All Courses') {
+      if (category === 'All Categories') {
         setCurrentCategory(null); // Reset to null to fetch all articles
       } else {
         setCurrentCategory(category);

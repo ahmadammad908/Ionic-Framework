@@ -6,12 +6,14 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+
 import {
   IonContent, IonHeader, IonIcon, IonSkeletonText, IonButton,
   IonModal,
   IonList,
   IonItem,
   IonInput,
+  IonLabel,
 } from "@ionic/react";
 import BackButton from "./BackButton";
 import { heart, eye, eyeOff } from 'ionicons/icons';
@@ -87,7 +89,7 @@ const Blog: React.FC = () => {
 
       setShowSignUpForm(false);
       toast.success("Sign up with Google successful!");
-      
+
     } catch (err: any) {
       console.error('Google Sign Up error:', err.message);
       toast.error(err.message);
@@ -158,7 +160,7 @@ const Blog: React.FC = () => {
         <IonHeader>
           <BackButton />
         </IonHeader>
-        <div className="mt-[70px]">
+        <div className="mt-[70px] border-red-200 md:flex md:flex-col md:items-center" >
           {loading ? (
             <>
               <div className="p-[10px] md:pl-[100px] text-center text-center w-[100%]">
@@ -198,31 +200,35 @@ const Blog: React.FC = () => {
                   </span>
                 </div>
               </div>
-              <div className="mt-[30px] p-[10px] md:pl-[100px] prose prose-lg mt-6 max-w-7xl pl-[40px]">
-                <p className="font-bold text-gray-500" id="family">{article?.paragraph}</p>
+              
+              <div className="mt-[30px] p-[10px] md:pl-[100px] prose prose-lg mt-6 max-w-7xl pl-[10px]">
+                <IonList className="p-[10px] rounded leading-8" >
+                    <IonLabel>{article?.paragraph}</IonLabel>
+                </IonList>
+                {/* <p className="font-bold text-gray-500" id="family">{article?.paragraph}</p> */}
               </div>
               <div className="mt-[30px] p-[10px] md:pl-[100px]">
                 {article?.videoUrl && (
                   <video src={article.videoUrl} controls style={{ width: "1000px" }} poster={article.posterUrl || DEFAULT_POSTER_URL}></video>
                 )}
               </div>
-              <div className="mt-[10px] p-[10px] md:pl-[100px] flex pl-[20px]">
+              <div className="mt-[10px] p-[10px] md:pl-[100px] flex pl-[20px] ">
                 <IonIcon
                   icon={heart}
-                  className="text-4xl"
+                  className="text-4xl "
                   style={{
                     cursor: "pointer",
                     color: article?.likes && user?.uid && article.likes.includes(user.uid) ? "red" : null,
                   }}
                   onClick={handleLike}
                 />
-                <p className="font-bold mt-[5px] ">{article?.likes.length} likes</p>
+                <p className="font-bold mt-[5px] ml-[10px]">{article?.likes.length} likes</p>
               </div>
-              <div className="p-[10px] md:pl-[100px] text-start pl-[32px]">
-                <h1 className="text-4xl lg:text-5xl font-bold lg:tracking-tight mt-1 lg:leading-tight font-myCustomCursive" id="family">Course Outline</h1>
-              </div>
-              <div className="mt-[0px] p-[10px] md:pl-[100px] prose prose-lg mt-6 max-w-7xl pl-[40px]">
-                <p className="font-bold text-gray-500" id="family">{article?.course}</p>
+              
+              <div className="mt-[0px] p-[10px] md:pl-[100px] prose prose-lg mt-6 max-w-7xl ">
+              <IonList className="p-[10px] rounded leading-8" >
+                    <IonLabel>{article?.course}</IonLabel>
+                </IonList>
               </div>
             </>
           )}
@@ -230,34 +236,35 @@ const Blog: React.FC = () => {
       </IonContent>
       <IonModal isOpen={showSignUpForm} style={{ width: "100%" }}>
         <IonContent className="ion-padding">
-          <div style={{ display: "flex", flexDirection: "column" }} className='md:ml-[30px]' >
+
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }} className=' mt-[20px] '>
             <ToastContainer />
-            <div className='flex justify-center text-3xl' style={{ marginBottom: "15px" }}>
-              <h1 className='text-3xl font-bold'>Sign up and <span className='text-blue-400'>Start Learning </span></h1>
+
+            <div className=' text-3xl' style={{ marginBottom: "20px" }}>
+              <h1 className='text-3xl font-bold text-center '>Create an <span className='text-blue-400'>Tech Sea</span> account</h1>
             </div>
             <IonList style={{ maxWidth: "500px", width: "100%" }}>
               <IonItem>
-                <IonInput label="Full name" labelPlacement="floating" fill="outline" className='font-bold' value={name} onIonChange={(e) => handleNameChange(e)}></IonInput>
+                <IonInput label="Name" labelPlacement="floating" fill="outline" type="text" value={name} onIonChange={(e) => handleNameChange(e)} className='font-bold'></IonInput>
               </IonItem>
               <IonItem>
                 <IonInput label="Email" labelPlacement="floating" fill="outline" type="email" value={signupEmail} onIonChange={(e) => setSignupEmail(e.detail.value!)} className='font-bold'></IonInput>
               </IonItem>
               <IonItem>
-                <IonInput label="Password" labelPlacement="floating" fill="outline" type={showPassword ? 'text' : 'password'} value={signupPassword} onIonChange={(e) => setSignupPassword(e.detail.value!)} className='font-bold'>
-                </IonInput>
+                <IonInput label="Password" labelPlacement="floating" fill="outline" type={showPassword ? 'text' : 'password'} value={signupPassword} onIonChange={(e) => setSignupPassword(e.detail.value!)} className='font-bold'></IonInput>
                 <IonIcon slot="end" icon={showPassword ? eyeOff : eye} onClick={togglePasswordVisibility} />
 
               </IonItem>
-
-              <IonButton expand="block" onClick={() => handleSignUp()} style={{ marginTop: "20px" }} type='submit' >Sign Up</IonButton>
-              <div>
-                <img src={Google} style={{ width: "10%", zIndex: "50", left: "130px" }} className='absolute p-[10px] md:block hidden ' alt="Google Logo" />
-                <IonButton expand="block" color="medium" style={{ marginTop: "10px" }} className='font-bold' onClick={handleGoogleSignUp}>Login With Google</IonButton>
+              <IonButton expand="block" onClick={handleSignUp} style={{ marginTop: "20px" }} className='font-bold'>Sign Up</IonButton>
+              <div className='text-center'>
+                <img src={Google} style={{ width: "30px", position: "absolute", zIndex: "20", marginTop: "10px", }} className='md:ml-[140px]  ml-[40px]'></img>
+                <IonButton expand="block" onClick={handleGoogleSignUp} style={{ marginTop: "10px" }} className='font-bold ' color={"dark"}>Sign Up in Google</IonButton>
               </div>
-              <IonButton expand="block" onClick={() => setShowSignUpForm(false)} color="medium" style={{ marginTop: "10px" }}>Cancel</IonButton>
+
+              <IonButton expand="block" onClick={() => setShowSignUpForm(false)} color="danger" style={{ marginTop: "10px" }}>Cancel</IonButton>
+
             </IonList>
           </div>
-          <ToastContainer />
         </IonContent>
       </IonModal>
     </>

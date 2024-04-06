@@ -18,6 +18,7 @@
     display: none;
   }
 }
+/* 
 @media only screen and (max-width: 991px) {
   #title{
     display: none;
@@ -34,7 +35,20 @@
     display: none;
     margin-top: 14px;
   }
-}
+} */
 
+@media only screen and (max-width: 1082px) {
+  #title{
+    display: none;
+    margin-top: 14px;
+  }
+} 
  
-  
+  #overflow-hidden::-webkit-scrollbar {
+    display: none;
+
+  }
+  #overflow-hidden {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
