@@ -20,7 +20,8 @@ import {
   IonInput,
   IonSkeletonText,
 } from '@ionic/react';
-import { search, close, eye, eyeOff, moon, sunny } from 'ionicons/icons';
+
+import { search, close, eye, eyeOff, moon, sunny, personCircleOutline } from 'ionicons/icons';
 
 import {
   getFirestore,
@@ -51,6 +52,8 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
   const [searchValue, setSearchValue] = useState('');
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
   const [showNoResults, setShowNoResults] = useState(false);
   const [showLoginForm, setShowLoginForm] = useState(false);
   const [showSignUpForm, setShowSignUpForm] = useState(false);
@@ -60,7 +63,10 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
   const [signupPassword, setSignupPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState("");
-  const [user, setUser] = useState<any>(null); // State to hold user info
+  const [user, setUser] = useState<any>(null);
+
+
+  // State to hold user info
   const [selectedCategory, setSelectedCategory] = useState<string>('All Courses'); // Selected category state
 
   let navigate = useNavigate();
@@ -264,6 +270,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
 
       const userCredential = await createUserWithEmailAndPassword(auth, signupEmail, signupPassword);
       await updateProfile(userCredential.user, { displayName: name });
+
       localStorage.setItem('loggedInUserEmail', signupEmail);
 
       setTimeout(() => {
@@ -296,11 +303,35 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
   };
 
 
+  const defaultPhotoURL = 'https://media.licdn.com/dms/image/D4D03AQFbxcSgXEjgIw/profile-displayphoto-shrink_200_200/0/1706532939017?e=2147483647&v=beta&t=uZ8dR8vLg6SHWI4dUJrRz92qhpiWsJo0EaFsjw8rCuk';
+
   return (
     <>
       <IonMenu contentId="main-content">
         <IonHeader>
           <IonToolbar>
+            {
+              user ? (
+                <>
+                  {user.photoURL ? (
+                    <img src={user.photoURL} alt="Profile" style={{ width: '30px', height: '30px', borderRadius: '50%', marginRight: '8px', cursor: "pointer" }} onClick={() => setIsOpen(true)} />
+                  ) : (
+                    <>
+                      <div onClick={() => setIsOpen(true)}>
+                        <img src={defaultPhotoURL} alt="Profile" style={{ width: '30px', height: '30px', borderRadius: '50%', marginRight: '8px', cursor: "pointer" }} />
+
+                      </div>
+                    </>
+                  )}
+                </>
+              ) : (
+                <>
+                  <div onClick={handleSignUpForm} >
+                    <IonIcon icon={personCircleOutline} style={{ width: '30px', height: '30px', borderRadius: '50%', marginRight: '8px', cursor: "pointer" }} color='primary' className='mt-[5px]' />
+                  </div>
+                </>
+              )
+            }
             <IonTitle>Tech Sea</IonTitle>
             <IonButtons slot="end">
               <IonButton onClick={closeMenu}>
@@ -334,16 +365,16 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
                   <>
                     <IonItem>
                       <IonButton fill="outline"
-                       onClick={handleLogout}>Logout</IonButton>
+                        onClick={handleLogout}>Logout</IonButton>
                     </IonItem>
                   </>
                 ) : (
                   <>
-                  <IonItem style={{ background: "#000012" }}>
-                    <IonButton fill="outline" onClick={handleLoginForm}>Login</IonButton>
-                    <IonButton className='ml-[10px]' onClick={handleSignUpForm}>SignUp</IonButton>
+                    <IonItem style={{ background: "#000012" }}>
+                      <IonButton fill="outline" onClick={handleLoginForm}>Login</IonButton>
+                      <IonButton className='ml-[10px]' onClick={handleSignUpForm}>SignUp</IonButton>
 
-                  </IonItem></>
+                    </IonItem></>
                 )
               }
             </div>
@@ -477,10 +508,10 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
           </IonModal>
 
           {/* Login Form Modal */}
-          <IonModal isOpen={showLoginForm} style={{ width: "100%", }}>
+          <IonModal isOpen={showLoginForm} onDidDismiss={() => setShowLoginForm(false)} style={{ width: "100%", }}>
             <IonContent className="ion-padding">
 
-              <div style={{ display: "flex", flexDirection: "column", alignItems:"center" }} className=' mt-[50px]'>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }} className=' mt-[50px]'>
                 <ToastContainer />
 
                 <div className='flex justify-center text-3xl' style={{ marginBottom: "30px" }}>
@@ -505,16 +536,16 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
           </IonModal>
 
           {/* SignUp Form Modal */}
-          <IonModal isOpen={showSignUpForm} style={{ width: "100%", }}>
+          <IonModal isOpen={showSignUpForm} onDidDismiss={() => setShowSignUpForm(false)}style={{ width: "100%", }}>
             <IonContent className="ion-padding" id='overflow-hidden'>
 
-              <div style={{ display: "flex", flexDirection: "column", alignItems:"center"}} className=' mt-[10px]  '>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }} className=' mt-[10px]  '>
                 <ToastContainer />
 
                 <div className=' text-3xl' style={{ marginBottom: "20px" }}>
                   <h1 className='text-3xl font-bold text-center '>Create an <span className='text-blue-400'>Tech Sea</span> account</h1>
                 </div>
-                <IonList style={{ maxWidth: "500px", width: "100%"}}>
+                <IonList style={{ maxWidth: "500px", width: "100%" }}>
                   <IonItem>
                     <IonInput label="Name" labelPlacement="floating" fill="outline" type="text" value={name} onIonChange={(e) => handleNameChange(e)} className='font-bold'></IonInput>
                   </IonItem>
@@ -528,14 +559,79 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
                   </IonItem>
                   <IonButton expand="block" onClick={handleSignUp} style={{ marginTop: "20px" }} className='font-bold'>Sign Up</IonButton>
                   <div className='text-center'>
-                    <img src={Google} style={{width:"30px", position:"absolute", zIndex:"20",marginTop:"10px", }} className='md:ml-[140px]  ml-[40px]'></img>
+                    <img src={Google} style={{ width: "30px", position: "absolute", zIndex: "20", marginTop: "10px", }} className='md:ml-[140px]  ml-[40px]'></img>
                     <IonButton expand="block" onClick={handleGoogleSignUp} style={{ marginTop: "10px" }} className='font-bold ' color={"dark"}>Sign Up in Google</IonButton>
                   </div>
-
                   <IonButton expand="block" onClick={handleSignUpForm} color="danger" style={{ marginTop: "10px" }} className='font-bold'>Cancel</IonButton>
-
                 </IonList>
               </div>
+            </IonContent>
+          </IonModal>
+
+          <IonModal isOpen={isOpen} onDidDismiss={() => setIsOpen(false)}>
+            <IonHeader>
+              <IonToolbar>
+                <IonTitle>User Profile</IonTitle>
+                <IonButtons slot="end">
+                  <IonButton onClick={() => setIsOpen(false)}>Close</IonButton>
+                </IonButtons>
+              </IonToolbar>
+            </IonHeader>
+            <IonContent className="ion-padding">
+              {
+                user ? (
+                  <>
+                    <div className='flex justify-center'>
+                      {/* <img src={user.photoURL} style={{ borderRadius: "50%" }}></img> */}
+                      {user.photoURL ? (
+                        <img src={user.photoURL} alt="Profile" style={{  borderRadius: '50%', marginRight: '8px', cursor: "pointer" }} onClick={() => setIsOpen(true)} />
+                      ) : (
+                        <>
+                          <div onClick={() => setIsOpen(true)}>
+                            <img src={defaultPhotoURL} alt="Profile" style={{ width:"80px", borderRadius: '50%', marginRight: '8px', cursor: "pointer" }} />
+
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    <div className=''>
+                      <IonList className='mt-[20px] ml-[-20px]'>
+                        <IonItem className='font-bold '>
+                          Name :
+                          <IonLabel class='text-end'>{user.displayName}</IonLabel>
+                        </IonItem>
+                      </IonList>
+                      <IonList className='mt-[20px] ml-[-20px]'>
+                        <IonItem className='font-bold '>
+                          Email :
+                          <IonLabel class='text-end truncate'>{user.email}</IonLabel>
+                        </IonItem>
+                      </IonList>
+                      <IonList className='mt-[20px] ml-[-20px]'>
+                        <IonItem className='font-bold '>
+                          User Uid :
+                          <IonLabel class='text-end truncate'>  {user.uid}</IonLabel>
+                        </IonItem>
+                      </IonList>
+                      <IonList >
+                        <IonButton className='mt-[20px] font-bold' expand="block" color={"danger"} onClick={() => {
+                          handleLogout();
+                          setIsOpen(false);
+                        }}>Logout</IonButton>
+                      </IonList>
+
+
+
+
+                    </div>
+                  </>
+
+                ) : (
+                  <>
+                  </>
+                )
+              }
             </IonContent>
           </IonModal>
         </IonContent>

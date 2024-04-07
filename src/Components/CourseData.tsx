@@ -20,6 +20,8 @@ import { heart, eye, eyeOff } from 'ionicons/icons';
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../Server/Firebase";
 import Google from "../assets/images/Google.png"
+import { motion } from 'framer-motion';
+
 
 interface Article {
   id: string;
@@ -45,6 +47,8 @@ const Blog: React.FC = () => {
   const [signupPassword, setSignupPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState("");
+  // const [isOpen, setIsOpen] = useState(false);
+
 
   const [user] = useAuthState(auth);
 
@@ -164,55 +168,85 @@ const Blog: React.FC = () => {
           {loading ? (
             <>
               <div className="p-[10px] md:pl-[100px] text-center text-center w-[100%]">
-                <IonSkeletonText animated style={{ height: "10vh", marginBottom: "10px", }} className="md:w-[70%] w-[100%]" />
-                <IonSkeletonText animated style={{ height: "10vh", marginBottom: "10px" }} className="md:w-[70%] w-[100%]" />
-                <IonSkeletonText animated style={{ height: "10vh", marginBottom: "10px" }} className="md:w-[70%] w-[100%]" />
-                <IonSkeletonText animated style={{ height: "10vh", marginBottom: "10px" }} className="md:w-[70%] w-[100%]" />
-                <IonSkeletonText animated style={{ height: "10vh", marginBottom: "10px" }} className="md:w-[70%] w-[100%]" />
-                <IonSkeletonText animated style={{ height: "10vh", marginBottom: "10px" }} className="md:w-[70%] w-[100%]" />
-                <IonSkeletonText animated style={{ height: "10vh", marginBottom: "10px" }} className="md:w-[70%] w-[100%]" />
+                <IonSkeletonText animated style={{ height: "10vh", marginBottom: "10px", }} className="md:w-[100%] w-[100%]" />
+                <IonSkeletonText animated style={{ height: "10vh", marginBottom: "10px" }} className="md:w-[100%] w-[100%]" />
+                <IonSkeletonText animated style={{ height: "10vh", marginBottom: "10px" }} className="md:w-[100%] w-[100%]" />
+                <IonSkeletonText animated style={{ height: "10vh", marginBottom: "10px" }} className="md:w-[100%] w-[100%]" />
+                <IonSkeletonText animated style={{ height: "10vh", marginBottom: "10px" }} className="md:w-[100%] w-[100%]" />
+                <IonSkeletonText animated style={{ height: "10vh", marginBottom: "10px" }} className="md:w-[100%] w-[100%]" />
+                <IonSkeletonText animated style={{ height: "10vh", marginBottom: "10px" }} className="md:w-[100%] w-[100%]" />
               </div>
             </>
           ) : (
             <>
               <div className="p-[10px] md:pl-[100px] text-center md:text-start">
+                <motion.span initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.5 }}>
                 <span className="badge text-white bg-amber-500 font-bold p-[10px] rounded"> Thoughts </span>
+
+                </motion.span>
               </div>
               <div className="p-[10px] md:pl-[100px] text-center md:text-start">
+                <motion.h1 initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.5 }}>
                 <h1 className="text-4xl lg:text-5xl font-bold lg:tracking-tight mt-1 lg:leading-tight font-myCustomCursive" id="family">{article?.Outline}</h1>
+
+                </motion.h1>
               </div>
               <div className="p-[10px] md:pl-[100px] text-start flex flex-wrap">
                 {article?.createdAt && (
+                  <motion.p initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.5 }}>
                   <p className="text-gray-400 font-bold ml-[30px] md:ml-[0px]" id="family">{formatDate(new Date(article.createdAt.seconds * 1000))}</p>
+                  </motion.p>
                 )}
                 <div className="w-full md:w-auto flex flex-wrap gap-3 mt-[20px] md:mt-[0px]">
+                  <motion.span initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.5 }} >
                   <span className="badge badge-sm bg-pink-200 text-pink-800 ml-[30px] p-[3px] rounded">
                     #interviews
                   </span>
-                  <span className="badge badge-sm bg-pink-200 text-pink-800 ml-[30px] p-[3px] rounded">
+                  </motion.span>
+                  <motion.span initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.5 }}> <span className="badge badge-sm bg-pink-200 text-pink-800 ml-[30px] p-[3px] rounded">
                     #recruiters
-                  </span>
-                  <span className="badge badge-sm bg-pink-200 text-pink-800 ml-[30px] p-[3px] rounded">
+                  </span></motion.span>
+                  <motion.span initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.5 }}> <span className="badge badge-sm bg-pink-200 text-pink-800 ml-[30px] p-[3px] rounded">
                     #coding-challenges
-                  </span>
-                  <span className="badge badge-sm bg-pink-200 text-pink-800 ml-[20px] p-[3px] rounded">
+                  </span></motion.span>
+                  <motion.span initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.5 }}> <span className="badge badge-sm bg-pink-200 text-pink-800 ml-[20px] p-[3px] rounded">
                     #programming
-                  </span>
+                  </span></motion.span>
                 </div>
               </div>
-              
+              <motion.div initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.5 }}>
               <div className="mt-[30px] p-[10px] md:pl-[100px] prose prose-lg mt-6 max-w-7xl pl-[10px]">
                 <IonList className="p-[10px] rounded leading-8" >
                     <IonLabel>{article?.paragraph}</IonLabel>
                 </IonList>
                 {/* <p className="font-bold text-gray-500" id="family">{article?.paragraph}</p> */}
               </div>
+              </motion.div>
+              
               <div className="mt-[30px] p-[10px] md:pl-[100px]">
                 {article?.videoUrl && (
                   <video src={article.videoUrl} controls style={{ width: "1000px" }} poster={article.posterUrl || DEFAULT_POSTER_URL}></video>
                 )}
               </div>
-              <div className="mt-[10px] p-[10px] md:pl-[100px] flex pl-[20px] ">
+              <IonList className="p-[10px] rounded m-[10px]">
+              <div className="mt-[10px]   flex  justify-between">
+                
                 <IonIcon
                   icon={heart}
                   className="text-4xl "
@@ -222,19 +256,27 @@ const Blog: React.FC = () => {
                   }}
                   onClick={handleLike}
                 />
-                <p className="font-bold mt-[5px] ml-[10px]">{article?.likes.length} likes</p>
-              </div>
+                <p className="font-bold mt-[5px] ml-[5px]">{article?.likes.length} likes</p>
+               
               
+              </div>
+              </IonList>
+              
+              <motion.div initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.5 }}>
               <div className="mt-[0px] p-[10px] md:pl-[100px] prose prose-lg mt-6 max-w-7xl ">
               <IonList className="p-[10px] rounded leading-8" >
                     <IonLabel>{article?.course}</IonLabel>
                 </IonList>
               </div>
+              </motion.div>
+              
             </>
           )}
         </div>
       </IonContent>
-      <IonModal isOpen={showSignUpForm} style={{ width: "100%" }}>
+      <IonModal isOpen={showSignUpForm} onDidDismiss={() => setShowSignUpForm(false)}  style={{ width: "100%" }}>
         <IonContent className="ion-padding">
 
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }} className=' mt-[20px] '>

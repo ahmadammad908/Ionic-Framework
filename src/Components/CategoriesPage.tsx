@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import BackButton from './BackButton'
+import { motion } from 'framer-motion';
+
 // import { IonContent, IonHeader } from '@ionic/react'
 import {
     IonContent,
@@ -45,20 +47,30 @@ interface ContentProps {
 
                 <IonGrid style={{ marginTop: "10px" }}>
                     <div className='p-[30px]'>
-                        <h1 className='font-bold text-4xl italic md:text-start text-center'>Our Latest <span className='text-blue-400'>Courses</span></h1>
+                        <motion.h1 initial={{ opacity: 0, y: 50 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.5 }}>
+                            <h1 className='font-bold text-4xl italic md:text-start text-center'>Our Latest <span className='text-blue-400'>Courses</span></h1>
+                        </motion.h1>
                     </div>
                     <IonRow>
                         {loading || articles.length === 0 ? (
                             <>
                                 {Array.from({ length: skeletonLength }).map((_, index) => (
                                     <IonCol key={index} size="6" size-md="4" size-lg="2">
-                                        <IonCard className='ion-activatable recipe group hover:scale-95 ios hover:border-4 hover:border-blue-700'>
-                                            <IonSkeletonText animated style={{ width: '100%', height: '15vh' }} />
-                                            <IonCardHeader>
-                                                <IonSkeletonText animated style={{ width: '80%', height: '1.5rem', marginBottom: '0.5rem' }} />
-                                                <IonSkeletonText animated style={{ width: '90%', height: '1rem' }} />
-                                            </IonCardHeader>
-                                        </IonCard>
+                                        <motion.div initial={{ opacity: 0, y: 50 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.5 }}>
+                                            <IonCard className='ion-activatable recipe group hover:scale-95 ios hover:border-4 hover:border-blue-700'>
+                                                <IonSkeletonText animated style={{ width: '100%', height: '15vh' }} />
+                                                <IonCardHeader>
+                                                    <IonSkeletonText animated style={{ width: '80%', height: '1.5rem', marginBottom: '0.5rem' }} />
+                                                    <IonSkeletonText animated style={{ width: '90%', height: '1rem' }} />
+                                                </IonCardHeader>
+                                            </IonCard>
+                                        </motion.div>
+
+
                                     </IonCol>
                                 ))}
                             </>
