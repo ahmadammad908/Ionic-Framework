@@ -459,7 +459,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
         </IonHeader>
         <IonContent className="ion-padding">
 
-          <IonModal isOpen={myModal.isOpen}>
+          <IonModal isOpen={myModal.isOpen} onDidDismiss={() =>  setMyModal({isOpen:false})}>
             <IonToolbar>
               <IonSearchbar
                 value={searchValue}
