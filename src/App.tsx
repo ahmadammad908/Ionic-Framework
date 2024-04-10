@@ -24,7 +24,7 @@ import { db } from './Server/Firebase';
 import { collection, onSnapshot, query, QuerySnapshot, where, Unsubscribe } from 'firebase/firestore';
 import CategoriesPage from './Components/CategoriesPage';
 import BackButton from './Components/BackButton';
-
+import Privacy from "./Components/Privacy"
 
 
 interface Article {
@@ -150,6 +150,7 @@ function App() {
               <Route path="/cat" element={<CategoriesPage loading={loading} articles={articles} />}></Route>
               <Route path="/home" element={<Home />}></Route>
               <Route path='/back' element={<BackButton/>}></Route>
+              <Route path='/privacy' element={<Privacy/>}></Route>
               {/* <Route path='/login' element={<Login/>}></Route>
               <Route path='/signUp' element={<SignUp/>}></Route> */}
             </Routes>

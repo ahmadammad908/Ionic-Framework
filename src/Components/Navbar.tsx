@@ -14,11 +14,13 @@ import {
   IonToggle,
   IonMenuButton,
   IonList,
+  IonAvatar,
   IonItem,
   IonActionSheet,
   IonLabel,
   IonInput,
   IonSkeletonText,
+  IonImg,
 } from '@ionic/react';
 
 import { search, close, eye, eyeOff, moon, sunny, personCircleOutline } from 'ionicons/icons';
@@ -36,6 +38,8 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfi
 import { toast, ToastContainer } from "react-toastify";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import Google from "../assets/images/Google.png"
+
+
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -171,6 +175,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
       setTimeout(async () => {
         const q = query(collection(firestore, 'products'),
           where("title", ">=", value),
+
           where("title", "<=", value.toLowerCase() + "\uf8ff")
         );
 
@@ -183,6 +188,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
             title: doc.data().title,
             content: doc.data().content,
             videoUrl: doc.data().videoUrl,
+            imageUrl: doc.data().imageUrl,
           });
         });
 
@@ -343,16 +349,20 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
         <IonContent className="ion-padding">
           <IonList>
             <IonItem style={{ margin: "10px", background: "#000012" }} >
-              Home
+              <a href='https://careful-animantarx-a3a.notion.site/Tech-Sea-Public-Roadmap-1-09e167431143407a957c6186316b5d63?pvs=4' className='font-bold'>Road Map</a>
             </IonItem>
             <IonItem style={{ margin: "10px", background: "#000012" }} >
-              Contact Us
+              <a href="mailto:ahmadammad.me789@gmail.com" className="font-bold">Contact US</a>
+
             </IonItem>
             <IonItem style={{ margin: "10px", background: "#000012" }} >
-              About Us
+
+              <a href="mailto:ahmadammad.me789@gmail.com" className="font-bold">Help</a>
+
             </IonItem>
-            <IonItem style={{ margin: "10px", background: "#000012" }} >
-              Privacy Policy
+            <IonItem style={{ margin: "10px", background: "#000012" }} className='font-bold'>
+              <Link to={"/privacy"} className='font-bold'>              Privacy Policy
+              </Link>
             </IonItem>
             <IonItem>
               <Link to={"/admin"}>
@@ -459,7 +469,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
         </IonHeader>
         <IonContent className="ion-padding">
 
-          <IonModal isOpen={myModal.isOpen} onDidDismiss={() =>  setMyModal({isOpen:false})}>
+          <IonModal isOpen={myModal.isOpen} onDidDismiss={() => setMyModal({ isOpen: false })}>
             <IonToolbar>
               <IonSearchbar
                 value={searchValue}
@@ -497,6 +507,9 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
                     <div key={id}>
                       <Link to={`/blog/${suggestion.id}`}>
                         <IonItem onClick={() => handleSuggestionClick(suggestion)}>
+                          <IonAvatar slot="start">
+                            <IonImg src={suggestion.imageUrl}></IonImg>
+                          </IonAvatar>
                           <IonLabel className='font-bold '>{suggestion.title}</IonLabel>
                         </IonItem>
                       </Link>
@@ -536,7 +549,7 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
           </IonModal>
 
           {/* SignUp Form Modal */}
-          <IonModal isOpen={showSignUpForm} onDidDismiss={() => setShowSignUpForm(false)}style={{ width: "100%", }}>
+          <IonModal isOpen={showSignUpForm} onDidDismiss={() => setShowSignUpForm(false)} style={{ width: "100%", }}>
             <IonContent className="ion-padding" id='overflow-hidden'>
 
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }} className=' mt-[10px]  '>
@@ -584,13 +597,14 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
                     <div className='flex justify-center'>
                       {/* <img src={user.photoURL} style={{ borderRadius: "50%" }}></img> */}
                       {user.photoURL ? (
-                        <img src={user.photoURL} alt="Profile" style={{  borderRadius: '50%', marginRight: '8px', cursor: "pointer" }} onClick={() => setIsOpen(true)} />
+                        <img src={user.photoURL} alt="Profile" style={{ borderRadius: '50%', marginRight: '8px', cursor: "pointer" }} onClick={() => setIsOpen(true)} />
                       ) : (
                         <>
-                          <div onClick={() => setIsOpen(true)}>
-                            <img src={defaultPhotoURL} alt="Profile" style={{ width:"80px", borderRadius: '50%', marginRight: '8px', cursor: "pointer" }} />
+                          <div onClick={() => setIsOpen(true)} className='flex  justify-center'>
+                            <img src={defaultPhotoURL} alt="Profile" style={{ borderRadius: '50%', objectFit: 'cover', marginRight: '8px', cursor: "pointer", width: "60px" }} />
 
                           </div>
+
                         </>
                       )}
                     </div>

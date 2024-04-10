@@ -104,6 +104,7 @@ const Content: React.FC<ContentProps> = ({ loading, articles, categories, handle
               <motion.button initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.5 }}>
+                  
                 <IonButton className='w-full sm:w-auto ion-color ion-color-tertiary ios button button-solid ion-activatable ion-focusable mt-[30px] font-bold'><Link to={"/cat"}>See All the courses</Link></IonButton>
               </motion.button>
             </div>
