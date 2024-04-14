@@ -1,13 +1,13 @@
 import './App.css';
 import '@ionic/react/css/core.css';
-import { IonApp, IonRouterOutlet, setupIonicReact} from '@ionic/react';
+import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Import BrowserRouter
 import Blog from './Components/CourseData';
 import '@ionic/react/css/normalize.css';
 import '@ionic/react/css/structure.css';
 import '@ionic/react/css/typography.css';
 import { useState, useEffect } from 'react';
-import {createRef} from 'react';
+import { createRef } from 'react';
 /* Optional CSS utils that can be commented out */
 import '@ionic/react/css/padding.css';
 import '@ionic/react/css/float-elements.css';
@@ -23,9 +23,10 @@ import { getTheme, isIos, setTheme } from "./Utils/Utils";
 import { db } from './Server/Firebase';
 import { collection, onSnapshot, query, QuerySnapshot, where, Unsubscribe } from 'firebase/firestore';
 import CategoriesPage from './Components/CategoriesPage';
-import BackButton from './Components/BackButton';
+// import BackButton from './Components/BackButton';
 import Privacy from "./Components/Privacy"
-
+// import Techsea from "./assets/images/Tech Sea.jpg.png";
+import Loader from './Components/Loader';
 
 interface Article {
   id: string;
@@ -120,43 +121,67 @@ function App() {
 
   // const handleCategoryClick = (category: string) => {
   //   setCurrentCategory(category);
-    const handleCategoryClick = (category: string) => {
-      if (category === 'All Categories') {
-        setCurrentCategory(null); // Reset to null to fetch all articles
-      } else {
-        setCurrentCategory(category);
-      }
-    };
+  const handleCategoryClick = (category: string) => {
+    if (category === 'All Categories') {
+      setCurrentCategory(null); // Reset to null to fetch all articles
+    } else {
+      setCurrentCategory(category);
+    }
+  };
+  const [isLoading, setIsLoading] = useState(true);
 
-    // If you want to do something else on category click, you can add more logic here
-  
-    // This is just an example, you can modify this based on your route structure
-    
-  
+  // Simulating loading for 1 minute
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000); // 1 minute
+
+    return () => clearTimeout(timer);
+  }, []);
+  // If you want to do something else on category click, you can add more logic here
+
+  // This is just an example, you can modify this based on your route structure
+
+
 
   return (
     <>
-      <IonApp>
-        <Router>
-
-        <Navbar categories={categories} handleCategoryClick={handleCategoryClick} scrollToBottom={scrollToBottom}  />
-
-          <IonRouterOutlet>
+      {
+        isLoading ? (
+          <>
+            <div className='flex justify-center items-center   h-[100vh]'>
+              <Loader/>
+              
+            </div>
             
-            <Routes>
-              <Route path="/" element={<Content loading={loading} articles={articles} categories={categories} handleCategoryClick={handleCategoryClick} />} />
-              <Route path="/admin" element={<AdminPanel />} />
-              <Route path='/blog/:id' element={<Blog />}></Route>
-              <Route path="/cat" element={<CategoriesPage loading={loading} articles={articles} />}></Route>
-              <Route path="/home" element={<Home />}></Route>
-              <Route path='/back' element={<BackButton/>}></Route>
-              <Route path='/privacy' element={<Privacy/>}></Route>
-              {/* <Route path='/login' element={<Login/>}></Route>
+          </>
+        ) : (
+          <>
+            <IonApp>
+              <Router>
+
+                <Navbar categories={categories} handleCategoryClick={handleCategoryClick} scrollToBottom={scrollToBottom} />
+
+                <IonRouterOutlet>
+
+                  <Routes>
+                    <Route path="/" element={<Content loading={loading} articles={articles} categories={categories} handleCategoryClick={handleCategoryClick} />} />
+                    <Route path="/admin" element={<AdminPanel />} />
+                    <Route path='/blog/:id' element={<Blog />}></Route>
+                    <Route path="/cat" element={<CategoriesPage loading={loading} articles={articles} />}></Route>
+                    <Route path="/home" element={<Home />}></Route>
+                    <Route path='/privacy' element={<Privacy />}></Route>
+                    {/* <Route path='/login' element={<Login/>}></Route>
               <Route path='/signUp' element={<SignUp/>}></Route> */}
-            </Routes>
-          </IonRouterOutlet>
-        </Router>
-      </IonApp>
+                  </Routes>
+                </IonRouterOutlet>
+              </Router>
+            </IonApp>
+
+
+          </>
+        )
+      }
     </>
   );
 }

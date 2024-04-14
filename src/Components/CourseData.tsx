@@ -170,7 +170,7 @@ const Blog: React.FC = () => {
     <>
       <IonContent>
         <IonHeader>
-          <BackButton />
+          <BackButton setShowSignUpForm={setShowSignUpForm}  id ={ id } article={article}/>
         </IonHeader>
         <div className="mt-[70px] border-red-200 md:flex md:flex-col md:items-center" >
           {loading ? (
@@ -251,10 +251,13 @@ const Blog: React.FC = () => {
                 {article?.videoUrl && user ? (
                   <video src={article.videoUrl} controls style={{ width: "1000px" }} poster={article.posterUrl || DEFAULT_POSTER_URL}></video>
                 ) : (
-                  <div style={{}} >
-                    <div className="flex justify-center">
-                      <p className="font-bold text-lg mt-4" style={{marginBottom:"10px"}}>Please <IonButton color={"danger"} className="mt-[-14px]" onClick={handleVideo}>Sign Up</IonButton> to watch Video</p>
+                  <div style={{}} > 
+                    <IonList className="rounded">
+                    <div className="flex justify-between items-center p-[5px]">
+                      <p className="font-bold text-lg mt-4 truncate" style={{marginBottom:"10px"}}> Sign Up to watch Video</p>
+                      <IonButton color={"danger"} className="" onClick={handleVideo}>Sign Up</IonButton>
                     </div>
+                    </IonList>
                     <video style={{ width: "1000px" }} controls>
                     </video>
                     
@@ -263,8 +266,8 @@ const Blog: React.FC = () => {
                 )}
 
               </div>
-              <IonList className="p-[10px] rounded m-[10px]">
-                <div className="mt-[10px]   flex  justify-between">
+              <IonList className="p-[10px] rounded m-[10px] mt-[30px] md:hidden block">
+                <div className="mt-[10px]  flex  justify-between">
 
                   <IonIcon
                     icon={heart}

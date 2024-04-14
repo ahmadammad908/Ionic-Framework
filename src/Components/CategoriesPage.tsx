@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import BackButton from './BackButton'
 import { motion } from 'framer-motion';
 
 // import { IonContent, IonHeader } from '@ionic/react'
@@ -41,7 +40,7 @@ interface ContentProps {
         <>
             <IonContent>
                 <IonHeader>
-                    <BackButton />
+                   
                 </IonHeader>
 
 

@@ -361,14 +361,14 @@ const Navbar: React.FunctionComponent<NavbarProps> = ({ handleCategoryClick, cat
 
             </IonItem>
             <IonItem style={{ margin: "10px", background: "#000012" }} className='font-bold'>
-              <Link to={"/privacy"} className='font-bold'>              Privacy Policy
+              <Link to={"/privacy"} className='font-bold' onClick={closeMenu}>              Privacy Policy
               </Link>
             </IonItem>
-            <IonItem>
+            {/* <IonItem>
               <Link to={"/admin"}>
                 <IonButton fill="outline" onClick={closeMenu}>Admin Panel</IonButton>
               </Link>
-            </IonItem>
+            </IonItem> */}
             <div className='md:hidden block'>
               {
                 user ? (

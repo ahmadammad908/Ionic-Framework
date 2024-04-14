@@ -7,7 +7,6 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { useNavigate } from 'react-router-dom';
-import BackButton from './BackButton';
 
 interface FormData {
   title: string;
@@ -164,7 +163,6 @@ const Add = () => {
   return (
     <>
       <IonHeader>
-        <BackButton />
       </IonHeader>
       <IonContent>
         <div className="flex flex-col items-center justify-center min-h-screen" style={{ margin: '30px' }}>

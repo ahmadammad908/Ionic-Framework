@@ -1,11 +1,11 @@
 import { IonContent, IonHeader } from "@ionic/react"
-import BackButton from "./BackButton"
+import Privacybtn from "./Privacybtn"
 const Privacy = () => {
   return (
     <>
       <IonContent >
         <IonHeader>
-          <BackButton />
+          <Privacybtn />
         </IonHeader>
         <IonContent fullscreen={true} className="ios overscroll content-ltr " style={{ "--offset-top": "44px", "--offset-bottom": "0px" }}>
           <div className="mt-[30px] justify-center flex">
@@ -20,7 +20,7 @@ const Privacy = () => {
             <h1 className="text-2xl font-bold m-[10px] text-center"  > Information Collection and Use</h1>
           </div>
           <div className="flex justify-center">
-            <p className="font-bold text-center prose prose-lg mt-6 max-w-4xl leading-[30px] text-gray-500">
+            <p className="font-bold text-center prose prose-lg mt-6 max-w-4xl leading-[30px] text-gray-500 m-[10px]">
               We collect several types of information for various purposes to provide and improve our Service to you.
 
               Personal Data: When you use our website, we may ask for certain personally identifiable information that can be used to contact or identify you. This may include your name, email address, phone number, and other similar information
@@ -30,7 +30,7 @@ const Privacy = () => {
             <h1 className="text-2xl font-bold "  > Personal Data</h1>
           </div>
           <div className="flex justify-center">
-            <p className="font-bold text-center prose prose-lg mt-6 max-w-4xl leading-[30px] text-gray-500">
+            <p className="font-bold text-center prose prose-lg mt-6 max-w-4xl leading-[30px] text-gray-500 m-[10px]">
               While using our Service, we may ask you to provide us with certain personally identifiable information that can be used to contact or identify you ("Personal Data"). This may include, but is not limited to:
               Email address
                First name and last name
